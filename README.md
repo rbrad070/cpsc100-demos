@@ -24,5 +24,7 @@ Each demo steps through a flow diagram one box at a time. As you follow the arro
 |---|---|
 | [Letter Counter](https://rbrad070.github.io/cpsc100-demos/count-letter/) | Walk a string one index at a time until the `'\0'` terminator, counting how many times a letter appears. |
 | [Palindrome Checker](https://rbrad070.github.io/cpsc100-demos/palindrome/) | Move two indices, `left` and `right`, inward from both ends of a word, and use `break` to stop at the first mismatch. |
+| [Array Index Explorer](https://rbrad070.github.io/cpsc100-demos/array-index/) | Read and write `marks[i]` for any index. C doesn't check bounds, so an out-of-range index quietly reads or overwrites a neighbouring variable. |
+| [2D Array](https://rbrad070.github.io/cpsc100-demos/2d-array/) | Walk a 2D grid with a nested loop and watch each element light up in both the grid view and the single strip of memory C really uses (row-major order). |
 
-You can type your own word into either demo to see how the loop behaves.
+You can type your own word into the string demos, or your own values into the 2D array demo, to see how the loop behaves.
