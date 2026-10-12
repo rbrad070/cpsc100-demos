@@ -241,11 +241,12 @@
   .g2 td.done, .mem .cell.done { background: var(--ok-soft); border-color: var(--ok); }
   .g2 td.now { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .mem .cell { font-size: calc(var(--cell) * .4); }
-  .mem .idx { white-space: nowrap; font-size: 11px; }
+  .mem .idx { white-space: nowrap; font-size: 11px; text-align: center; }
   .rowband { display: flex; gap: 6px; margin: 0 auto 2px; font: 600 11px ui-monospace, Menlo, Consolas, monospace; }
   .rowband span { text-align: center; border-bottom: 2px solid; padding-bottom: 1px; }
   .rowband .r0 { color: var(--left); }
   .rowband .r1 { color: var(--right); }
+  .mem .offn { font-size: 13px; color: var(--ink); }
   .offset { text-align: center; font: 14px ui-monospace, Menlo, Consolas, monospace; min-height: 1.5em; margin-top: 4px; }
 </style>
 </head>
@@ -335,6 +336,8 @@
           <div class="ptr p hidden" id="ptr"><span>here</span><span class="tri">▼</span></div>
           <div class="cells" id="mem"></div>
         </div>
+        <div class="note" style="text-align:center;margin-top:2px">The bold number under each cell is its <b>offset</b>:
+          how many elements it sits from the start of the strip. It works just like a 1D array index.</div>
         <div class="offset" id="offset"></div>
       </div>
     </section>
@@ -510,12 +513,14 @@
       const push = s => {
         const c = s.now === undefined ? null : s.now;
         steps.push(Object.assign({ vars: { row, col, val: c ? at(...c) : null, off: c ? c[0] * C + c[1] : null },
+          subs: { off: c ? 'elements from the start' : '' },
           out, trace: trace.slice(), done: done.slice(), now: c, rowNow: row, colNow: col }, s, { now: c }));
       };
 
       push({ node: 'start', msg: `<b>Start</b>. This program prints every element of a 2-row, 3-column grid, one row per line.` });
       push({ node: 'declare', edge: 'e-start-declare',
-        msg: `Create <b>grid</b> with 2 rows of 3 ints. We <i>picture</i> it as a grid, but C stores all 6 ints back to back in <b>one strip of memory</b>: all of row 0 first, then all of row 1.` });
+        msg: `Create <b>grid</b> with 2 rows of 3 ints. We <i>picture</i> it as a grid, but C stores all 6 ints back to back in <b>one strip of memory</b>: all of row 0 first, then all of row 1. ` +
+             `Each cell's <b>offset</b> is how many elements it sits from the start of that strip: 0 for the first, 5 for the last, just like a 1D index.` });
       row = 0;
       push({ node: 'oinit', edge: 'e-declare-oinit', msg: `The outer loop picks the row. Start at <b>row = 0</b>.` });
 
@@ -542,7 +547,8 @@
           const v = at(row, col), k = row * C + col;
           out += `${v} `; done.push(k);
           trace.push([done.length, row, col, v, k]);
-          let msg = `Print <b>grid[${row}][${col}] = ${v}</b>. In memory it is offset ${row} × 3 + ${col} = <b>${k}</b>.`;
+          let msg = `Print <b>grid[${row}][${col}] = ${v}</b>. To find it in memory, skip ${row} full row${row === 1 ? '' : 's'} ` +
+                    `of 3 ints (${row} × 3 = ${row * 3}), then ${col} more: offset <b>${k}</b>.`;
           if (k === 0) msg += ` That's the very first int in the strip.`;
           else if (col === 0) msg += ` Row ${row} starts <i>immediately after</i> row ${row - 1} ends: grid[${row - 1}][2] is offset ${k - 1}, and this is offset ${k}. No gap.`;
           else msg += ` That's the cell right next to the previous one.`;
@@ -569,7 +575,7 @@
         h += `<tr><th class="rowh" data-r="${r}">row ${r}</th>` +
              [0, 1, 2].map(c => `<td data-k="${r * C + c}"><span class="v">${at(r, c)}</span><span class="a">[${r}][${c}]</span></td>`).join('') + '</tr>';
       $('g2').innerHTML = h;
-      buildCells('memWrap', 'mem', vals.map((v, k) => ({ text: v, idx: `[${Math.floor(k / C)}][${k % C}]` })));
+      buildCells('memWrap', 'mem', vals.map((v, k) => ({ text: v, idx: `[${Math.floor(k / C)}][${k % C}]<br><b class="offn">${k}</b>` })));
       syncBand();
     },
     renderExtra(s) {
@@ -588,7 +594,7 @@
       });
       $('ptr').classList.toggle('hidden', nk < 0);
       if (nk >= 0) $('ptr').style.setProperty('--i', nk);
-      $('offset').innerHTML = nk < 0 ? '' : `grid[${s.now[0]}][${s.now[1]}] → offset ${s.now[0]} × 3 + ${s.now[1]} = <b>${nk}</b>`;
+      $('offset').innerHTML = nk < 0 ? '' : `offset = row × (elements per row) + col = ${s.now[0]} × 3 + ${s.now[1]} = <b>${nk}</b>`;
     }
   });
 
