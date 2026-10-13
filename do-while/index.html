@@ -232,6 +232,12 @@
   .chip { font: 600 15px ui-monospace, Menlo, Consolas, monospace; padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--node); }
   .chip.used { opacity: .45; }
   .chip.now { border-color: var(--accent); background: var(--accent-soft); opacity: 1; }
+
+  /* data-type keywords in the flow diagram */
+  :root { --type: #0c8599; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --type: #3bc9db; } }
+  :root[data-theme="dark"] { --type: #3bc9db; }
+  .flow .kw { fill: var(--type); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -268,7 +274,7 @@
 
       <g class="node" id="n-start"><rect x="190" y="20" width="120" height="40" rx="20"/><text x="250" y="40">Start</text></g>
       <g class="node" id="n-declare"><rect x="150" y="90" width="200" height="50" rx="4"/>
-        <text x="250" y="106">Declare variables:</text><text class="code" x="250" y="125">int num</text></g>
+        <text x="250" y="106">Declare variables:</text><text class="code" x="250" y="125"><tspan class="kw">int</tspan> num</text></g>
       <g class="node" id="n-input"><polygon points="160,180 352,180 340,232 148,232"/>
         <text x="250" y="197">Prompt user</text>
         <text x="250" y="216">and read <tspan class="code" style="font-family:ui-monospace,Menlo,Consolas,monospace">num</tspan></text></g>

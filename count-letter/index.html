@@ -211,6 +211,12 @@
   .ptr.i { top: 6px; color: var(--left); }
   .var.i .name { color: var(--left); }
   .array-wrap { padding-bottom: 8px; }
+
+  /* data-type keywords in the flow diagram */
+  :root { --type: #0c8599; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --type: #3bc9db; } }
+  :root[data-theme="dark"] { --type: #3bc9db; }
+  .flow .kw { fill: var(--type); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -264,10 +270,10 @@
       <g class="node" id="n-init">
         <rect x="115" y="95" width="270" height="120" rx="4"/>
         <text x="250" y="115">Declare/initialize:</text>
-        <text class="code" x="250" y="135" id="init-word">char word[] = "hello"</text>
-        <text class="code" x="250" y="155" id="init-letter">char letter = 'l'</text>
-        <text class="code" x="250" y="175">int i = 0</text>
-        <text class="code" x="250" y="195">int count = 0</text>
+        <text class="code" x="250" y="135" id="init-word"><tspan class="kw">char</tspan> word[] = "hello"</text>
+        <text class="code" x="250" y="155" id="init-letter"><tspan class="kw">char</tspan> letter = 'l'</text>
+        <text class="code" x="250" y="175"><tspan class="kw">int</tspan> i = 0</text>
+        <text class="code" x="250" y="195"><tspan class="kw">int</tspan> count = 0</text>
       </g>
 
       <g class="node" id="n-outer">
@@ -557,8 +563,8 @@
     word = w; letter = L;
     $('word').value = w;
     $('letter').value = L;
-    $('init-word').textContent = `char word[] = "${w}"`;
-    $('init-letter').textContent = `char letter = '${L}'`;
+    $('init-word').innerHTML = `<tspan class="kw">char</tspan> word[] = "${w}"`;
+    $('init-letter').innerHTML = `<tspan class="kw">char</tspan> letter = '${L}'`;
     steps = buildSteps(w, L);
     cur = 0;
     buildArray();

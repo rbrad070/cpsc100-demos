@@ -201,6 +201,12 @@
   td.no { color: var(--bad); font-weight: 700; }
   tr.latest { background: var(--accent-soft); }
   .empty { color: var(--muted); font-style: italic; text-align: center; padding: 8px; }
+
+  /* data-type keywords in the flow diagram */
+  :root { --type: #0c8599; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --type: #3bc9db; } }
+  :root[data-theme="dark"] { --type: #3bc9db; }
+  .flow .kw { fill: var(--type); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -259,10 +265,10 @@
       <g class="node" id="n-init">
         <rect x="115" y="95" width="270" height="120" rx="4"/>
         <text x="250" y="115">Declare/initialize:</text>
-        <text class="code" x="250" y="135" id="init-word">char word[] = "level"</text>
-        <text class="code" x="250" y="155">int left = 0</text>
-        <text class="code" x="250" y="175">int right = strlen(word) - 1</text>
-        <text class="code" x="250" y="195">int is_palindrome = 1</text>
+        <text class="code" x="250" y="135" id="init-word"><tspan class="kw">char</tspan> word[] = "level"</text>
+        <text class="code" x="250" y="155"><tspan class="kw">int</tspan> left = 0</text>
+        <text class="code" x="250" y="175"><tspan class="kw">int</tspan> right = strlen(word) - 1</text>
+        <text class="code" x="250" y="195"><tspan class="kw">int</tspan> is_palindrome = 1</text>
       </g>
 
       <g class="node" id="n-outer">
@@ -579,7 +585,7 @@
     stop();
     word = w;
     $('word').value = w;
-    $('init-word').textContent = `char word[] = "${w}"`;
+    $('init-word').innerHTML = `<tspan class="kw">char</tspan> word[] = "${w}"`;
     $('pt-word').textContent = `Print: ${w}`;
     $('pf-word').textContent = `Print: ${w}`;
     steps = buildSteps(w);

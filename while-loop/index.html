@@ -226,6 +226,12 @@
   .side, .side > .card { min-width: 0; }
   .note { font-size: .88rem; color: var(--muted); margin-top: 10px; }
   kbd { font: 12px ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+
+  /* data-type keywords in the flow diagram */
+  :root { --type: #0c8599; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --type: #3bc9db; } }
+  :root[data-theme="dark"] { --type: #3bc9db; }
+  .flow .kw { fill: var(--type); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -264,7 +270,7 @@
 
       <g class="node" id="n-start"><rect x="190" y="20" width="120" height="40" rx="20"/><text x="250" y="40">Start</text></g>
       <g class="node" id="n-declare"><rect x="150" y="90" width="200" height="50" rx="4"/>
-        <text x="250" y="106">Declare variables:</text><text class="code" x="250" y="125">int num</text></g>
+        <text x="250" y="106">Declare variables:</text><text class="code" x="250" y="125"><tspan class="kw">int</tspan> num</text></g>
       <g class="node" id="n-input"><polygon points="152,165 360,165 348,215 140,215"/>
         <text x="250" y="190">Prompt user and read <tspan class="code" style="font-family:ui-monospace,Menlo,Consolas,monospace">num</tspan></text></g>
       <g class="node" id="n-check"><polygon points="250,248 335,290 250,332 165,290"/>
