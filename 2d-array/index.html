@@ -274,8 +274,8 @@
       <rect class="bodybox" x="165" y="432" width="300" height="252" rx="6"/>
       <text class="bodylabel" x="171" y="422">Inner loop body</text>
 
-      <path class="edge" id="e-start-declare"  d="M300 60 V90"/>
-      <path class="edge" id="e-declare-oinit"  d="M300 146 V170"/>
+      <path class="edge" id="e-start-declare"  d="M300 60 V84"/>
+      <path class="edge" id="e-declare-oinit"  d="M300 150 V170"/>
       <path class="edge" id="e-oinit-ocheck"   d="M300 210 V240"/>
       <path class="edge" id="e-ocheck-iinit"   d="M300 320 V370"/>
       <path class="edge" id="e-iinit-icheck"   d="M300 410 V450"/>
@@ -294,13 +294,14 @@
       <text class="elabel" data-edge="e-ocheck-end"     x="420" y="268">False</text>
 
       <g class="node" id="n-start"><rect x="240" y="20" width="120" height="40" rx="20"/><text x="300" y="40">Start</text></g>
-      <g class="node" id="n-declare"><rect x="160" y="90" width="280" height="56" rx="4"/>
-        <text x="300" y="108">Declare/initialize:</text>
-        <text class="code" x="300" y="128" id="declare-text">grid = {{1,2,3},{4,5,6}}</text></g>
-      <g class="node" id="n-oinit"><rect x="225" y="170" width="150" height="40" rx="4"/><text class="code" x="300" y="190">row = 0</text></g>
+      <g class="node" id="n-declare"><rect x="150" y="84" width="300" height="66" rx="4"/>
+        <text x="300" y="100">Declare/initialize:</text>
+        <text class="code" x="300" y="118">int grid[2][3] =</text>
+        <text class="code" x="300" y="136" id="declare-text">{{1,2,3},{4,5,6}}</text></g>
+      <g class="node" id="n-oinit"><rect x="225" y="170" width="150" height="40" rx="4"/><text class="code" x="300" y="190">int row = 0</text></g>
       <g class="node" id="n-ocheck"><polygon points="300,240 380,280 300,320 220,280"/>
         <text class="code" x="300" y="280">row &lt; 2?</text></g>
-      <g class="node" id="n-iinit"><rect x="225" y="370" width="150" height="40" rx="4"/><text class="code" x="300" y="390">col = 0</text></g>
+      <g class="node" id="n-iinit"><rect x="225" y="370" width="150" height="40" rx="4"/><text class="code" x="300" y="390">int col = 0</text></g>
       <g class="node" id="n-icheck"><polygon points="300,450 380,490 300,530 220,490"/>
         <text class="code" x="300" y="490">col &lt; 3?</text></g>
       <g class="node" id="n-print"><polygon points="192,560 420,560 408,604 180,604"/>
@@ -569,7 +570,7 @@
       return steps;
     },
     onLoad() {
-      $('declare-text').textContent = `grid = {{${vals.slice(0, 3)}},{${vals.slice(3)}}}`;
+      $('declare-text').textContent = `{{${vals.slice(0, 3)}},{${vals.slice(3)}}}`;
       let h = '<tr><th></th>' + [0, 1, 2].map(c => `<th class="colh" data-c="${c}">col ${c}</th>`).join('') + '</tr>';
       for (let r = 0; r < R; r++)
         h += `<tr><th class="rowh" data-r="${r}">row ${r}</th>` +
