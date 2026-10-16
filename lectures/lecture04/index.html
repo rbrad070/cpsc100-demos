@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control Flow; Conditionals · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../../">CPSC 100</a>
+  <span class="crumb">Lecture notes</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<header class="title">
+<div class="week">Week 4</div>
+<h1>Control Flow; Conditionals</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#branching" id="toc-branching">Branching</a></li>
+<li><a href="#relational-and-logical-operators"
+id="toc-relational-and-logical-operators">Relational and Logical
+Operators</a></li>
+<li><a href="#the-if-statement" id="toc-the-if-statement">The
+<code>if</code> Statement</a></li>
+<li><a href="#vs." id="toc-vs.">= vs. ==</a></li>
+<li><a href="#the-switch-statement" id="toc-the-switch-statement">The
+<code>switch</code> Statement</a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul>
+</nav>
+<section id="branching" class="level2">
+<h2>Branching</h2>
+<section id="programs-dont-always-run-top-to-bottom" class="level3">
+<h3>Programs Don’t Always Run Top to Bottom</h3>
+<p>Every program we’ve written so far executes <strong>every line, in
+order</strong>, exactly once.</p>
+<p>Real programs need to make <strong>decisions</strong>: run this code
+only if some condition holds, or choose between two different pieces of
+code depending on the input.</p>
+<p>This is called <strong>branching</strong>; and it is the last major
+flow-diagram concept before we can plan any kind of interesting
+program.</p>
+</section>
+<section id="the-diamond-a-new-shape" class="level3">
+<h3>The Diamond: A New Shape</h3>
+<p>Recall our shapes so far: <span class="alert">oval</span>
+(Start/Stop), <span class="alert">rectangle</span> (process), <span
+class="alert">parallelogram</span> (input/output), connected by <span
+class="alert">arrows</span>.</p>
+<p>This week we add a fourth shape: the <span
+class="alert">diamond</span>, for a <strong>decision</strong>.</p>
+<div class="center">
+<p><img src="fig01.svg" alt="Flow diagram with boxes: Decision?" class="diagram" loading="lazy"
+width="147" /></p>
+</div>
+<ul>
+<li><p>It is the <strong>only</strong> shape with two arrows leaving
+it</p></li>
+<li><p>One arrow is labeled <code>Yes</code> (the condition is
+true)</p></li>
+<li><p>The other arrow is labeled <code>No</code> (the condition is
+false)</p></li>
+</ul>
+</section>
+<section id="the-ifelse-flow-diagram-template" class="level3">
+<h3>The <code>if</code>/<code>else</code> Flow Diagram Template</h3>
+<div class="center">
+<p><img src="fig02.svg" alt="Flow diagram with boxes: Start; Test Condition; Do this if true: statement 1 …; Do this if false: statement 1 …; Stop" class="diagram" loading="lazy"
+width="602" /></p>
+</div>
+<p>The <strong>Test Condition</strong> diamond splits into a true branch
+and a false branch, and both branches <span class="alert">rejoin</span>
+before Stop; the program continues either way.</p>
+</section>
+</section>
+<section id="relational-and-logical-operators" class="level2">
+<h2>Relational and Logical Operators</h2>
+<section id="relational-operators" class="level3">
+<h3>Relational Operators</h3>
+<p>A <strong>relational operator</strong> compares two values and
+produces a true/false result:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Operator</strong></th>
+<th style="text-align: left;"><strong>Meaning</strong></th>
+<th style="text-align: left;"><strong>Example</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">==</span></code></td>
+<td style="text-align: left;">Equal to</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">==</span> b</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">!=</span></code></td>
+<td style="text-align: left;">Not equal to</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">!=</span> b</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">&lt;</span></code></td>
+<td style="text-align: left;">Less than</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">&lt;</span> b</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">&gt;</span></code></td>
+<td style="text-align: left;">Greater than</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">&gt;</span> b</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">&lt;=</span></code></td>
+<td style="text-align: left;">Less than or equal to</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">&lt;=</span> b</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">&gt;=</span></code></td>
+<td style="text-align: left;">Greater than or equal to</td>
+<td style="text-align: left;"><code
+class="sourceCode c">a <span class="op">&gt;=</span> b</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-c-represents-true-and-false" class="level3">
+<h3>How C Represents True and False</h3>
+<p>C has no built-in boolean type in the classic sense;</p>
+<ul>
+<li><p><span class="alert">Zero is false.</span></p></li>
+<li><p><span class="alert">Any non-zero value is considered
+true.</span></p></li>
+</ul>
+<p>A relational operator <em>produces</em> a <code
+class="sourceCode c"><span class="dv">1</span></code> or <code
+class="sourceCode c"><span class="dv">0</span></code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a <span class="op">=</span> <span class="op">(</span><span class="dv">4</span> <span class="op">&lt;</span> <span class="dv">10</span><span class="op">);</span>  <span class="co">// (4 &lt; 10) is true, so a = 1</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> b <span class="op">=</span> <span class="op">(</span><span class="dv">8</span> <span class="op">==</span> <span class="dv">9</span><span class="op">);</span>  <span class="co">// (8 == 9) is false, so b = 0</span></span></code></pre></div>
+<p><strong>C99</strong> gives you named values via <code
+class="sourceCode c"><span class="op">&lt;</span>stdbool<span class="op">.</span>h<span class="op">&gt;</span></code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdbool.h&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> x <span class="op">=</span> <span class="kw">false</span><span class="op">;</span>   <span class="co">// x is really just 0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> y <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>    <span class="co">// y is really just 1</span></span></code></pre></div>
+</section>
+<section id="logical-operators" class="level3">
+<h3>Logical Operators</h3>
+<p><strong>Logical operators</strong> combine multiple conditions into
+one:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Operator</strong></th>
+<th style="text-align: left;"><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>&amp;&amp;</code></td>
+<td style="text-align: left;">And – both sides must be true</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">||</span></code></td>
+<td style="text-align: left;">Or – either side (or both) must be
+true</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="op">!</span></code></td>
+<td style="text-align: left;">Not – reverses true/false</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong> check if age is within working age, 21 to
+65:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>age <span class="op">&gt;=</span> <span class="dv">21</span> <span class="op">&amp;&amp;</span> age <span class="op">&lt;=</span> <span class="dv">65</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Working age.</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="truth-tables" class="level3">
+<h3>Truth Tables</h3>
+<div class="columns">
+<div class="column">
+<p><strong><code>&amp;&amp;</code> (And)</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">A <code>&amp;&amp;</code> B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">T</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">F</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">F</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">F</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column">
+<p><strong><code class="sourceCode c"><span class="op">||</span></code>
+(Or)</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">A <code
+class="sourceCode c"><span class="op">||</span></code> B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">T</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">T</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">T</td>
+<td style="text-align: center;">T</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">F</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code class="sourceCode c"><span class="op">!</span></code> simply
+flips the result: <code
+class="sourceCode c"><span class="op">!(</span>A<span class="op">)</span></code>
+is true exactly when <code class="sourceCode c">A</code> is false.</p>
+</section>
+</section>
+<section id="the-if-statement" class="level2">
+<h2>The <code>if</code> Statement</h2>
+<section id="the-if-statement-1" class="level3">
+<h3>The <code>if</code> Statement</h3>
+<p>General format:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>condition<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The block executes <em>only if</em> <code
+class="sourceCode c">condition</code> evaluates to true (non-zero).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>temperature <span class="op">&gt;</span> <span class="dv">30</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;It&#39;s hot today.</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="the-else-statement" class="level3">
+<h3>The <code>else</code> Statement</h3>
+<p><code class="sourceCode c"><span class="cf">else</span></code>
+supplies the branch to take when the condition is false:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>condition<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Exactly <strong>one</strong> of the two blocks executes; never both,
+never neither.</p>
+</section>
+<section id="worked-example-positive-or-negative" class="level3">
+<h3>Worked Example: Positive or Negative</h3>
+<p>Prompt the user for an integer <code class="sourceCode c">num</code>,
+then print whether it is positive or negative. (Assume <code
+class="sourceCode c"><span class="dv">0</span></code> is positive.) This
+is the diagram you should draw <em>before</em> writing any code.</p>
+<div class="center">
+<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num ≥ 0?; Print: &quot;%d is positive&quot;; Print: &quot;%d is negative&quot;; Stop" class="diagram" loading="lazy"
+width="501" /></p>
+</div>
+</section>
+<section id="positive-or-negative-code" class="level3">
+<h3>Positive or Negative: Code</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Enter an integer: &quot;</span><span class="op">);</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    scanf<span class="op">(</span><span class="st">&quot; </span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>num <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> is positive</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> is negative</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="the-else-if-chain" class="level3">
+<h3>The <code>else if</code> Chain</h3>
+<p>Multiple conditions, checked <em>in order</em>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>condition1<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>condition2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>condition3<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><span class="alert">The computer picks the first branch whose
+condition matches</span> and skips the rest; even if a later condition
+would also be true.</p>
+</section>
+<section id="worked-example-grade-classifier" class="level3">
+<h3>Worked Example: Grade Classifier</h3>
+<p>Read a numeric score (0–100) and print the corresponding letter
+grade:</p>
+<ul>
+<li><p>score
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>90</mn><mo>⟹</mo></mrow><annotation encoding="application/x-tex">\geq 90 \implies</annotation></semantics></math>
+<code
+class="sourceCode c"><span class="ch">&#39;A&#39;</span></code></p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>70</mn><mo>≤</mo></mrow><annotation encoding="application/x-tex">70\leq</annotation></semantics></math>
+score
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&lt;</mo><mn>90</mn><mo>⟹</mo></mrow><annotation encoding="application/x-tex">&lt;90 \implies</annotation></semantics></math>
+<code
+class="sourceCode c"><span class="ch">&#39;B&#39;</span></code></p></li>
+<li><p>score
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&lt;</mo><mn>70</mn><mo>⟹</mo></mrow><annotation encoding="application/x-tex">&lt;70 \implies</annotation></semantics></math>
+<code
+class="sourceCode c"><span class="st">&quot;Go to office hours!&quot;</span></code></p></li>
+</ul>
+<p>using an <code
+class="sourceCode c"><span class="cf">if</span></code>-<code
+class="sourceCode c"><span class="cf">else</span> <span class="cf">if</span></code>-<code
+class="sourceCode c"><span class="cf">else</span></code> chain.</p>
+<p><span class="alert">Draw the diagram first</span>; one diamond per
+grade boundary, chained together.</p>
+</section>
+<section id="grade-classifier-flow-diagram" class="level3">
+<h3>Grade Classifier: Flow Diagram</h3>
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int score; Prompt user and read score; score ≥ 90?; score ≥ 70?; Print &quot;Go to office hours!&quot;; Stop; Print &#x27;A&#x27;; Print &#x27;B&#x27;" class="diagram" loading="lazy"
+width="680" /></p>
+</div>
+</section>
+<section id="grade-classifier-code" class="level3">
+<h3>Grade Classifier: Code</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> score<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Enter a score (0-100): &quot;</span><span class="op">);</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    scanf<span class="op">(</span><span class="st">&quot; </span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>score<span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>score <span class="op">&gt;=</span> <span class="dv">90</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;Grade: A</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>score <span class="op">&gt;=</span> <span class="dv">70</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;Grade: B</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;Go to office hours!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="try-it-grade-classifier-walkthrough" class="level3">
+<h3>Try It: Grade Classifier Walkthrough</h3>
+<div class="tryit">
+<p>Pick a score and watch which path it takes through the chain of
+diamonds:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/grade-classifier/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/grade-classifier/</code></a></span></p>
+</div>
+<ul>
+<li><p>Try the boundaries <code
+class="sourceCode c"><span class="dv">90</span></code>, <code
+class="sourceCode c"><span class="dv">89</span></code>, and <code
+class="sourceCode c"><span class="dv">70</span></code>, then tick
+<em>Swap the order</em> to see why the strictest test must come
+first</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="vs." class="level2">
+<h2>= vs. ==</h2>
+<section id="the-classic-bug-vs." class="level3">
+<h3>The Classic Bug: = vs. ==</h3>
+<p><span class="alert"><code
+class="sourceCode c"><span class="op">=</span></code> assigns; <code
+class="sourceCode c"><span class="op">==</span></code> compares.</span>
+Mixing them up is one of the most common bugs in C.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> isCharterMember <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>isCharterMember <span class="op">=</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span>   </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">// </span><span class="al">BUG</span><span class="co">: this ASSIGNS 1, doesn&#39;t compare!</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Welcome back!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code
+class="sourceCode c">isCharterMember <span class="op">=</span> <span class="dv">1</span></code>
+is itself an expression whose <em>value</em> is <code
+class="sourceCode c"><span class="dv">1</span></code>, which is
+non-zero, so the <code
+class="sourceCode c"><span class="cf">if</span></code> is <strong>always
+true</strong>, no matter what <code
+class="sourceCode c">isCharterMember</code> held before.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>isCharterMember <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span>   <span class="co">// correct: COMPARES</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Welcome back!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Why this is dangerous:</strong> the code <em>compiles</em>;
+the compiler won’t save you here (though <code
+class="sourceCode c"><span class="op">-</span>Wall</code> will warn
+you).</p>
+</section>
+</section>
+<section id="the-switch-statement" class="level2">
+<h2>The <code>switch</code> Statement</h2>
+<section id="the-switch-statement-1" class="level3">
+<h3>The <code>switch</code> Statement</h3>
+<p>A long <code
+class="sourceCode c"><span class="cf">else</span> <span class="cf">if</span></code>
+chain testing the <em>same</em> variable against many values gets hard
+to read:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>day <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">&quot;Mon</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>day <span class="op">==</span> <span class="dv">2</span><span class="op">)</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">&quot;Tue</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>day <span class="op">==</span> <span class="dv">3</span><span class="op">)</span> <span class="op">{</span> printf<span class="op">(</span><span class="st">&quot;Wed</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="op">}</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">// ... and so on</span></span></code></pre></div>
+<p><code class="sourceCode c"><span class="cf">switch</span></code> is
+an efficient multi-way branch on a single <strong>integer or
+character</strong> value:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> <span class="op">(</span>day<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Mon</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Tue</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Wed</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Invalid</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="switch-anatomy" class="level3">
+<h3><code>switch</code>: Anatomy</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> <span class="op">(</span>expression<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> value1<span class="op">:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        statements<span class="op">;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> value2<span class="op">:</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        statements<span class="op">;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span><span class="op">:</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        statements<span class="op">;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li><p><code class="sourceCode c">expression</code> must evaluate to an
+<code class="sourceCode c"><span class="dt">int</span></code> or <code
+class="sourceCode c"><span class="dt">char</span></code></p></li>
+<li><p>Control jumps to the matching <code
+class="sourceCode c"><span class="cf">case</span></code> label</p></li>
+<li><p><code class="sourceCode c"><span class="cf">default</span></code>
+runs when no <code
+class="sourceCode c"><span class="cf">case</span></code> matches; like a
+final <code
+class="sourceCode c"><span class="cf">else</span></code></p></li>
+<li><p><code class="sourceCode c"><span class="cf">default</span></code>
+is optional, but good practice</p></li>
+</ul>
+</section>
+<section id="break-why-it-matters" class="level3">
+<h3><code>break</code>: Why It Matters</h3>
+<p>Without <code
+class="sourceCode c"><span class="cf">break</span></code>, execution
+<span class="alert">falls through</span> into the <em>next</em> case,
+ignoring its label:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> <span class="op">(</span>day<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Mon</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span>   <span class="co">// no break!</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Tue</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span>   <span class="co">// no break!</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">3</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Wed</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span><span class="op">:</span> printf<span class="op">(</span><span class="st">&quot;Invalid</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>If <code
+class="sourceCode c">day <span class="op">==</span> <span class="dv">1</span></code>,
+this prints <span class="alert">all three</span>: <code
+class="sourceCode c">Mon</code>, <code class="sourceCode c">Tue</code>,
+<em>and</em> <code class="sourceCode c">Wed</code>; execution keeps
+running until it hits a <code
+class="sourceCode c"><span class="cf">break</span></code> or the end of
+the <code
+class="sourceCode c"><span class="cf">switch</span></code>.</p>
+</section>
+<section id="fall-through-a-bug-or-on-purpose" class="level3">
+<h3>Fall-Through: A Bug, or On Purpose?</h3>
+<p>Usually, missing <code
+class="sourceCode c"><span class="cf">break</span></code> is a
+<strong>bug</strong>.</p>
+<p>But fall-through can be <strong>intentional</strong>; grouping
+several cases that should do the same thing:</p>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb16"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> <span class="op">(</span>grade<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="ch">&#39;A&#39;</span><span class="op">:</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="ch">&#39;B&#39;</span><span class="op">:</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="ch">&#39;C&#39;</span><span class="op">:</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Passing</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="ch">&#39;D&#39;</span><span class="op">:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="ch">&#39;F&#39;</span><span class="op">:</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Failing</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="column">
+<p>Here, <code
+class="sourceCode c"><span class="cf">case</span> <span class="ch">&#39;A&#39;</span><span class="op">:</span></code>
+and <code
+class="sourceCode c"><span class="cf">case</span> <span class="ch">&#39;B&#39;</span><span class="op">:</span></code>
+have <em>no</em> statements of their own. They intentionally fall
+through to <code
+class="sourceCode c"><span class="cf">case</span> <span class="ch">&#39;C&#39;</span><span class="op">:</span></code>’s
+code. <span class="alert">Comment intentional fall-through</span> so the
+next reader doesn’t "fix" it.</p>
+</div>
+</div>
+</section>
+<section id="switch-vs.-else-if-when-to-prefer-which" class="level3">
+<h3><code>switch</code> vs. <code>else if</code>: When to Prefer
+Which</h3>
+<ul>
+<li><p>Use <code
+class="sourceCode c"><span class="cf">switch</span></code> when testing
+<strong>one variable</strong> against many <strong>exact</strong>
+integer/character values</p></li>
+<li><p>Use <code
+class="sourceCode c"><span class="cf">if</span></code>/<code
+class="sourceCode c"><span class="cf">else</span> <span class="cf">if</span></code>
+when conditions involve <strong>ranges</strong>, multiple variables, or
+relational/logical operators; <code
+class="sourceCode c"><span class="cf">switch</span></code> cannot test
+<code
+class="sourceCode c">score <span class="op">&gt;=</span> <span class="dv">90</span></code></p></li>
+<li><p><code class="sourceCode c"><span class="cf">switch</span></code>
+often reads more clearly for menu-style or command-style
+branching</p></li>
+</ul>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2>Summary</h2>
+<section id="summary-1" class="level3">
+<h3>Summary</h3>
+<ul>
+<li><p><strong>The diamond:</strong> the only shape with two arrows
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+<code>True</code> and <code>False</code></p></li>
+<li><p><strong>Relational operators</strong> produce a true (<code
+class="sourceCode c"><span class="dv">1</span></code>) or false (<code
+class="sourceCode c"><span class="dv">0</span></code>) result;
+<strong>logical operators</strong> (<code>&amp;&amp;</code>, <code
+class="sourceCode c"><span class="op">||</span></code>, <code
+class="sourceCode c"><span class="op">!</span></code>) combine
+conditions</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">if</span></code>/<code
+class="sourceCode c"><span class="cf">else</span> <span class="cf">if</span></code>/<code
+class="sourceCode c"><span class="cf">else</span></code>:</strong> the
+computer picks the <em>first</em> matching branch and skips the
+rest</p></li>
+<li><p><span class="alert"><code
+class="sourceCode c"><span class="op">=</span></code> assigns, <code
+class="sourceCode c"><span class="op">==</span></code> compares</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+this bug compiles silently</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">switch</span></code>:</strong>
+efficient multi-way branch on an int/char; <code
+class="sourceCode c"><span class="cf">break</span></code> prevents
+fall-through; fall-through can be intentional if commented</p></li>
+<li><p>Prefer <code
+class="sourceCode c"><span class="cf">switch</span></code> for
+exact-value branching on one variable; prefer <code
+class="sourceCode c"><span class="cf">if</span></code>/<code
+class="sourceCode c"><span class="cf">else</span> <span class="cf">if</span></code>
+for ranges and multi-variable conditions</p></li>
+</ul>
+</section>
+</section>
+<nav class="pager">
+<a class="prev" href="../lecture03/"><span class="label">← Previous</span>Week
+3: Operators, Expressions, and the Standard Library</a>
+<a class="next" href="../lecture05/"><span class="label">Next →</span>Week
+5: Loops</a>
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

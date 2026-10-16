@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is a Program? · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../../">CPSC 100</a>
+  <span class="crumb">Lecture notes</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<header class="title">
+<div class="week">Week 1</div>
+<h1>What is a Program?</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#how-a-computer-runs-a-program"
+id="toc-how-a-computer-runs-a-program">How a Computer Runs a
+Program</a></li>
+<li><a href="#source-code" id="toc-source-code">Source Code</a></li>
+<li><a href="#c-programming-language" id="toc-c-programming-language">C
+Programming Language</a></li>
+<li><a href="#a-minimal-c-program" id="toc-a-minimal-c-program">A
+Minimal C Program</a></li>
+<li><a href="#flow-diagrams" id="toc-flow-diagrams">Flow
+Diagrams</a></li>
+<li><a href="#computing-environments"
+id="toc-computing-environments">Computing Environments</a></li>
+</ul>
+</nav>
+<section id="how-a-computer-runs-a-program" class="level2">
+<h2>How a Computer Runs a Program</h2>
+<section id="what-does-a-computer-actually-do" class="level3">
+<h3>What Does a Computer Actually Do?</h3>
+<p>At its core, a computer is a machine that executes <span
+class="alert">instructions</span>, one at a time.</p>
+<div class="center">
+<p><img src="code-instructions.png" alt="A computer runs code as a list of simple instructions, one after another: instruction1 (1+1), instruction2 (2&lt;10?), instruction3, and so on" style="width:55.0%"
+loading="lazy" /></p>
+</div>
+<ul>
+<li><p>Each instruction is extremely simple: add two numbers, copy a
+value, compare two values, jump to a different instruction.</p></li>
+<li><p>Nothing happens “all at once”; everything is one step after
+another.</p></li>
+</ul>
+</section>
+<section id="how-computers-read-instructions" class="level3">
+<h3>How Computers Read Instructions?</h3>
+<p>The <span class="alert">CPU</span> (Central Processing Unit) is the
+physical piece of hardware that reads one instruction, carries it out,
+then moves to the next.</p>
+<div class="center">
+<p><img src="cpu_intel_i7.jpg" alt="Photo of an Intel Core i7 processor chip, top view" style="width:30.0%" loading="lazy" /></p>
+<div class="credit">
+<p>Photo: <a
+href="https://commons.wikimedia.org/wiki/File:Intel_CPU_Core_i7_12700K_Alder_Lake_top.jpg">Eric
+Gaba</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC
+BY-SA 4.0</a>, via Wikimedia Commons</p>
+</div>
+</div>
+<p>The instructions that a <span class="alert">CPU</span> reads are
+called <span class="alert">Machine Code</span> (also known as "native
+code").</p>
+</section>
+<section id="machine-code" class="level3">
+<h3>Machine Code</h3>
+<ul>
+<li><p>Machine code is <span class="alert">hardwired</span> into the
+design of the CPU hardware; it can’t be changed at will</p></li>
+<li><p>Each family of compatible CPUs (e.g. the popular Intel x86
+family) has its own, idiosyncratic machine code</p></li>
+<li><p>Machine code from one CPU family is <span class="alert">not
+compatible</span> with another family’s</p></li>
+</ul>
+<div class="center">
+<p><img src="fig01.svg" alt="Three CPU families, x86 (laptops and desktops), ARM (phones and Apple Macs) and RISC-V (open design, embedded), each with a different pattern of 1s and 0s for the same instruction, add 1" class="diagram" loading="lazy"
+width="577" /></p>
+</div>
+</section>
+<section id="what-is-a-program" class="level3">
+<h3>What is a Program?</h3>
+<p>A program is just a very long, very precise list of these simple
+instructions.</p>
+<p>An example of a program is the web browser Firefox,</p>
+<div class="center">
+<p><img src="Firefox_logo_2019.png" alt="Firefox logo" style="width:20.0%"
+loading="lazy" /></p>
+<div class="credit">
+<p>Logo: <a
+href="https://commons.wikimedia.org/wiki/File:Firefox_logo,_2019.svg">Mozilla
+Foundation</a>, <a href="https://www.mozilla.org/MPL/2.0/">MPL 2.0</a>,
+via Wikimedia Commons. Firefox is a trademark of the Mozilla
+Foundation.</p>
+</div>
+</div>
+<ul>
+<li><p>it is made up of a sequence of millions of these very simple
+machine code instructions,</p></li>
+<li><p>each of these instructions are as simple as just adding or
+comparing two numbers.</p></li>
+</ul>
+</section>
+<section id="the-mental-model-input-to-process-to-output"
+class="level3">
+<h3>The Mental Model: Input
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Process
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Output</h3>
+<p>Almost every program you write this term can be described with one
+simple pattern:</p>
+<ul>
+<li><p><span class="alert">Input</span>; the program receives data (from
+the keyboard, a file, etc.)</p></li>
+<li><p><span class="alert">Process</span>; the program does something
+with that data (calculations, comparisons, ...)</p></li>
+<li><p><span class="alert">Output</span>; the program produces a result
+(text on the screen, a file, ...)</p></li>
+</ul>
+<p>We will keep coming back to this pattern all semester; today, our
+first programs will only have the <span class="alert">Output</span>
+step.</p>
+</section>
+</section>
+<section id="source-code" class="level2">
+<h2>Source Code</h2>
+<section id="source-code-instructions-for-humans-and-machines"
+class="level3">
+<h3>Source Code: Instructions for Humans <em>and</em> Machines</h3>
+<p><span class="alert">Source code</span> is the text you write; it is
+written so that a <em>human</em> can read and understand it.</p>
+<ul>
+<li><p>The computer cannot run your source code directly.</p></li>
+<li><p>It must first be <span class="alert">translated</span> into
+instructions the CPU understands.</p></li>
+<li><p>How that translation happens depends on the language.</p></li>
+</ul>
+<div class="center">
+<p><img src="software-translation.png" alt="Source code (a = &quot;hello&quot;; b = a + &quot;!&quot;;) is translated into machine code instructions" style="width:80.0%"
+loading="lazy" /></p>
+</div>
+</section>
+<section id="many-languages-many-grammars" class="level3">
+<h3>Many Languages, Many Grammars</h3>
+<p>Just like English and French have different grammar rules, every
+programming language has its own <span class="alert">grammar</span> (or
+<em>syntax</em>); the rules for how code must be written.</p>
+<ul>
+<li><p>C, Python, Java, and JavaScript all look different and follow
+different rules, even when solving the same problem</p></li>
+<li><p>Each language’s translator only understands <em>that</em>
+language’s grammar; a C compile (translator) can’t read Python</p></li>
+<li><p>And each language has its own way of getting translated into
+machine code</p></li>
+</ul>
+</section>
+<section id="compiled-vs.-interpreted-languages" class="level3">
+<h3>Compiled vs. Interpreted Languages</h3>
+<p><span class="alert">Compiled languages</span> (e.g. C, C++): your
+entire source file is translated <em>ahead of time</em> into a
+standalone executable program.</p>
+<ul>
+<li><p>You run the translator (the <em>compiler</em>) once</p></li>
+<li><p>The result is a file the CPU can run directly, any time, without
+the compiler</p></li>
+</ul>
+<p><span class="alert">Interpreted languages</span> (e.g. Python,
+JavaScript): another program (the <em>interpreter</em>) reads your
+source code and carries out its instructions <em>as it reads them</em>,
+line by line, every time you run it.</p>
+</section>
+</section>
+<section id="c-programming-language" class="level2">
+<h2>C Programming Language</h2>
+<section id="c-programming-language-1" class="level3">
+<h3>C Programming Language</h3>
+<p>This term we will be writing our programs in C, which is a compiled
+language; your text file becomes a runnable program.</p>
+<div class="center">
+<p><img src="software-compiler.png" alt="A compiler turns source code into program.exe, a file of machine code instructions" style="width:80.0%"
+loading="lazy" /></p>
+</div>
+<p>Note: the source code in the image above is not actual C syntax; it
+just illustrates the general idea of source code being <span
+class="alert">compiled</span> (translated) into machine code.</p>
+</section>
+<section id="history-of-c" class="level3">
+<h3>History of C</h3>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p>Developed at Bell Laboratories by Ken Thompson and Dennis Ritchie
+(1972)</p></li>
+<li><p>General-purpose</p></li>
+<li><p>Fast</p></li>
+<li><p>Adaptable</p></li>
+</ul>
+</div><div class="column figure-col">
+<p><span><img src="thompson_ritchie.jpg" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
+<div class="credit">
+<p>Photo: <a
+href="https://commons.wikimedia.org/wiki/File:Ken_Thompson_and_Dennis_Ritchie--1973.jpg">unknown
+author</a>, public domain, via Wikimedia Commons</p>
+</div>
+</div>
+</div>
+</section>
+<section id="versions-of-c" class="level3">
+<h3>Versions of C</h3>
+<ul>
+<li><p>Early C (“K&amp;R C”): described by Kernighan and Ritchie’s 1978
+book, before any official standard</p></li>
+<li><p><span class="alert">ANSI C</span> (1989, aka C89/C90): first
+official standard, from the American National Standards Institute</p>
+<ul>
+<li><p>Standardized function prototypes and the standard
+library</p></li>
+<li><p>Made C code portable across different compilers</p></li>
+</ul></li>
+<li><p>Later standards refined the language: C99, C11, C17, C23</p></li>
+<li><p>In this course, “ANSI C” just means standard, portable C</p></li>
+</ul>
+</section>
+<section id="influence-of-c-today" class="level3">
+<h3>Influence of C today</h3>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p>Unix and Most of Linux written in C</p></li>
+<li><p>Databases (SQL, Oracle) written in C</p></li>
+<li><p>Other programming languages, (e.g. Python) use compilers or
+interpreters written in C.</p></li>
+<li><p>Influenced C++, Objective-C, C#, Carbon etc.</p></li>
+</ul>
+</div><div class="column figure-col">
+<p><span><img src="thompson_ritchie.jpg" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
+<div class="credit">
+<p>Photo: <a
+href="https://commons.wikimedia.org/wiki/File:Ken_Thompson_and_Dennis_Ritchie--1973.jpg">unknown
+author</a>, public domain, via Wikimedia Commons</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-development-cycle" class="level3">
+<h3>The Development Cycle</h3>
+<p>Every week this term, you will repeat the same four-step cycle:</p>
+<div class="center">
+<p><span class="alert">Write</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<span class="alert">Compile</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<span class="alert">Run</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<span class="alert">Observe</span></p>
+</div>
+<ul>
+<li><p><strong>Write</strong>; edit your source code in an
+editor</p></li>
+<li><p><strong>Compile</strong>; translate it into a program; fix any
+errors the compiler reports</p></li>
+<li><p><strong>Run</strong>; execute the resulting program</p></li>
+<li><p><strong>Observe</strong>; check the output against what you
+expected; if it’s wrong, go back to <strong>Write</strong></p></li>
+</ul>
+</section>
+</section>
+<section id="a-minimal-c-program" class="level2">
+<h2>A Minimal C Program</h2>
+<section id="the-building-blocks" class="level3">
+<h3>The Building Blocks</h3>
+<p>Every C program we write this term starts with the same four
+pieces:</p>
+<ul>
+<li><p><code>#include &lt;stdio.h&gt;</code>; brings in <code
+class="sourceCode c">printf</code> (allows you to print characters to
+the screen) and friends before the rest of the program is
+compiled</p></li>
+<li><p><code class="sourceCode c">main<span class="op">()</span></code>;
+where the program starts running; everything between its opening
+<code>{</code> and closing <code>}</code> runs first, top to
+bottom</p></li>
+<li><p>the <span class="alert">semicolon</span> <code
+class="sourceCode c"><span class="op">;</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+ends every statement; leave one out and the compiler will
+complain</p></li>
+<li><p><code
+class="sourceCode c"><span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+the last statement in <code
+class="sourceCode c">main<span class="op">()</span></code>; it tells the
+operating system the program finished successfully and ends the
+program</p></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      printf<span class="op">(</span><span class="st">&quot;...&quot;</span><span class="op">);</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+</section>
+<section id="our-first-c-program" class="level3">
+<h3>Our First C Program</h3>
+<p>Below is a simple C program saved in the <span class="alert">source
+file</span> <em>small_step.c</em>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Prints a message on the screen */</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Just one small step for coders. &quot;</span><span class="op">);</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;One giant leap for programmers!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><br />
+This is the simplest complete C program: it compiles, runs, and produces
+output.</p>
+</section>
+<section id="what-does-printf-do" class="level3">
+<h3>What Does <code>printf()</code> Do?</h3>
+<p><code class="sourceCode c">printf<span class="op">()</span></code> is
+a library function that sends text to the screen ; it is our first <span
+class="alert">Output</span> step.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Just one small step for coders. &quot;</span><span class="op">);</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;One giant leap for programmers!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span></code></pre></div>
+<ul>
+<li><p>The text inside the quotes is printed exactly as written</p></li>
+<li><p><code class="text">\n</code> means “start a new line”</p></li>
+<li><p>You can call <code
+class="sourceCode c">printf<span class="op">()</span></code> as many
+times as you like; each call is its own output step</p></li>
+</ul>
+</section>
+<section id="comments" class="level3">
+<h3>Comments</h3>
+<p>Comments are <em>not</em> C instructions; the compiler ignores them.
+They explain your code to other humans (and to future you).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* Prints a message on the screen */</span></span></code></pre></div>
+<p>Two types of comments:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">// This is a single-line comment</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* This is a</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">   multi-line comment */</span></span></code></pre></div>
+<p>Use comments to explain <em>why</em>, not to restate <em>what</em>
+the code obviously already says.</p>
+</section>
+</section>
+<section id="flow-diagrams" class="level2">
+<h2>Flow Diagrams</h2>
+<section id="planning-before-coding" class="level3">
+<h3>Planning Before Coding</h3>
+<p>Before we write any more code, let’s learn a tool for planning
+programs: a <span class="alert">flow diagram</span> (or flowchart).</p>
+<ul>
+<li><p>A flow diagram is a picture of the steps a program takes, and the
+order it takes them in</p></li>
+<li><p>It lets us plan the logic of a program <em>before</em> typing any
+code</p></li>
+<li><p>Each shape has a specific meaning</p></li>
+<li><p>Arrows show the order things happen</p></li>
+</ul>
+<p>This is the <span class="alert">first</span> time we use flow
+diagrams; we’ll keep extending them all course.</p>
+</section>
+<section id="flow-diagram-shapes-this-week" class="level3">
+<h3>Flow Diagram Shapes (This Week)</h3>
+<p>This week we only need three shapes, plus the arrow:</p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p><strong>Oval</strong>; Start or Stop of the program</p></li>
+<li><p><strong>Rectangle</strong>; a process or computation
+step</p></li>
+<li><p><strong>Parallelogram</strong>; input or output (e.g. <code
+class="sourceCode c">printf<span class="op">()</span></code>, <code
+class="sourceCode c">scanf<span class="op">()</span></code>)</p></li>
+</ul>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig02.svg" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
+width="173" /></p>
+</div>
+</div>
+</div>
+<p>We will see two more shapes (decision, and grouped-logic) later in
+the course, once we start writing <code
+class="sourceCode c"><span class="cf">if</span></code> statements and
+loops.</p>
+</section>
+<section id="mapping-input-to-process-to-output-onto-shapes"
+class="level3">
+<h3>Mapping Input
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Process
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Output onto Shapes</h3>
+<p>Recall today’s mental model: every program reads input, processes it,
+and produces output.</p>
+<p>For a program that only prints a message, there is no input or
+processing step; just output:</p>
+<div class="center">
+<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Output: printf(...); Stop" class="diagram" loading="lazy"
+width="176" /></p>
+</div>
+</section>
+<section id="flow-diagram-for-small_step.c" class="level3">
+<h3>Flow Diagram for <code
+class="sourceCode c">small_step<span class="op">.</span>c</code></h3>
+<p>Here is the flow diagram for <code
+class="sourceCode c">small_step<span class="op">.</span>c</code>:</p>
+<div class="columns">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Print: &quot;Just one small step...&quot;; Print: &quot;One giant leap...&quot;; Stop" class="diagram" loading="lazy"
+width="227" /></p>
+</div>
+</div><div class="column">
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Prints a message on the screen */</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Just one small step for coders. &quot;</span><span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;One giant leap for programmers!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Notice how each box in the diagram maps directly to a line of
+code:<br />
+Start
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Output
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Stop.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="computing-environments" class="level2">
+<h2>Computing Environments</h2>
+<section id="computing-environments-1" class="level3">
+<h3>Computing Environments</h3>
+<p><em>Computing Environment</em>: the collection of hardware, software,
+and tools needed to write, compile, and run programs.</p>
+<p>Examples:</p>
+<ul>
+<li><p>Our labs: Windows, with <code>gcc</code> (GNU C Compiler), VS
+Code, and PowerShell</p></li>
+<li><p>A Mac with Xcode and Terminal</p></li>
+<li><p>There are other computing environments too, e.g. for web
+development, data science, or supercomputers</p></li>
+</ul>
+</section>
+<section id="compilers" class="level3">
+<h3>Compilers</h3>
+<p><em>Compiler</em>: a program that translates your source code into an
+executable program.</p>
+<p>Examples of C compilers:</p>
+<ul>
+<li><p><strong>gcc</strong> (GNU C Compiler, Linux and most
+labs)</p></li>
+<li><p>Xcode’s compiler (Mac)</p></li>
+<li><p>MinGW / Cygwin (GNU compiler for Windows)</p></li>
+</ul>
+</section>
+<section id="command-line-interface-cli" class="level3">
+<h3>Command Line Interface (CLI)</h3>
+<p><em>CLI</em>: a way of interacting with the computer by typing text
+commands instead of clicking.</p>
+<ul>
+<li><p>Terminal (Mac/Linux)</p></li>
+<li><p><strong>Windows PowerShell</strong>; what we’ll use in this
+course</p></li>
+</ul>
+<p>We compile and run our programs from the CLI.</p>
+</section>
+<section id="writing-code-the-editor-ide" class="level3">
+<h3>Writing Code: the Editor / IDE</h3>
+<p>An <em>Integrated Development Environment</em> (IDE) helps you:</p>
+<ul>
+<li><p>organize code and projects</p></li>
+<li><p>catch syntax mistakes as you type</p></li>
+<li><p>compile and run your program with one click</p></li>
+</ul>
+<p>We will use <strong>VS Code</strong> with the C/C++ extension.</p>
+</section>
+<section id="compiling-and-running-from-the-cli" class="level3">
+<h3>Compiling and Running From the CLI</h3>
+<p>Assume you have a file <code
+class="sourceCode c">small_step<span class="op">.</span>c</code>.</p>
+<ul>
+<li><p>Open a CLI: PowerShell (Windows) or Terminal (Mac/Linux)</p></li>
+<li><p>Navigate to the folder containing the file</p></li>
+<li><p>Compile:<br />
+<code
+class="sourceCode c">gcc small_step<span class="op">.</span>c <span class="op">-</span>o small_step<span class="op">.</span>exe</code>
+(Windows)<br />
+<code
+class="sourceCode c">gcc small_step<span class="op">.</span>c <span class="op">-</span>o small_step<span class="op">.</span>out</code>
+(Mac)</p></li>
+<li><p>This creates an <em>executable file</em></p></li>
+<li><p>Run it:<br />
+<code class="text">._step.exe</code> (Windows)<br />
+<code
+class="sourceCode c"><span class="op">./</span>small_step<span class="op">.</span>out</code>
+(Mac)</p></li>
+<li><p>The program runs and prints its output in the same CLI
+window</p></li>
+</ul>
+</section>
+</section>
+<nav class="pager">
+
+<a class="next" href="../lecture02/"><span class="label">Next →</span>Week
+2: Variables, Data Types, and Basic I/O</a>
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

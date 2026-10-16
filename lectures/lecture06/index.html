@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strings and Arrays in C · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../../">CPSC 100</a>
+  <span class="crumb">Lecture notes</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<header class="title">
+<div class="week">Week 6</div>
+<h1>Strings and Arrays in C</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#revisiting-strings" id="toc-revisiting-strings">Revisiting
+Strings</a></li>
+<li><a href="#strings-and-loops" id="toc-strings-and-loops">Strings and
+Loops</a></li>
+<li><a href="#string.h"
+id="toc-string.h"><code>&lt;string.h&gt;</code></a></li>
+<li><a href="#reading-strings-safely"
+id="toc-reading-strings-safely">Reading Strings Safely</a></li>
+<li><a href="#why-arrays" id="toc-why-arrays">Why Arrays?</a></li>
+<li><a href="#indexing" id="toc-indexing">Indexing</a></li>
+<li><a href="#iterating-arrays-with-a-loop"
+id="toc-iterating-arrays-with-a-loop">Iterating Arrays with a
+Loop</a></li>
+<li><a href="#two-dimensional-arrays"
+id="toc-two-dimensional-arrays">Two-Dimensional Arrays</a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul>
+</nav>
+<section id="revisiting-strings" class="level2">
+<h2>Revisiting Strings</h2>
+<section id="remember-week-2" class="level3">
+<h3>Remember Week 2?</h3>
+<p>Back in Week 2 you already wrote this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">];</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%s</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Hello, </span><span class="sc">%s</span><span class="st">!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span></span></code></pre></div>
+<ul>
+<li><p>You were told: <span class="alert">“a string is a <code
+class="sourceCode c"><span class="dt">char</span></code> array”</span>
+and <code>%s</code> prints it</p></li>
+<li><p>You were told the details would come <span class="alert">“in a
+later week”</span></p></li>
+<li><p>That week is <span class="alert">now</span></p></li>
+</ul>
+</section>
+<section id="whats-actually-inside-char-name50" class="level3">
+<h3>What’s Actually Inside <code class="text">char name[50]</code>?</h3>
+<p><code
+class="sourceCode c"><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">]</span></code>
+reserves <span class="alert">50 bytes</span> of contiguous memory, one
+<code class="sourceCode c"><span class="dt">char</span></code> per
+box.</p>
+<p>A <span class="alert">string</span> is not a separate C data type, it
+is a <strong>convention</strong> for using a <code
+class="sourceCode c"><span class="dt">char</span></code> array:</p>
+<ul>
+<li><p>The characters of the text are stored one per element, in
+order</p></li>
+<li><p>A special sentinel value, the <span class="alert">null
+terminator</span> <code class="text">'\0'</code>, is stored in the
+element right after the last real character</p></li>
+<li><p>Everything after that in the array is unused, leftover memory. C
+does not care what garbage is sitting there</p></li>
+</ul>
+<p>This is the entire definition of a “string” in C. There is no length
+field, no special type, just an array and a rule about where it
+ends.</p>
+</section>
+<section id="the-null-terminator" class="level3">
+<h3>The Null Terminator</h3>
+<p><code class="text">'\0'</code> has many names – null character,
+binary zero, ASCII 0, string terminator.</p>
+<p>C adds it automatically for a string literal:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> month<span class="op">[</span><span class="dv">10</span><span class="op">]</span> <span class="op">=</span> <span class="st">&quot;January&quot;</span><span class="op">;</span></span></code></pre></div>
+<div class="columns">
+<div class="column figure-col">
+<p><img src="fig01.svg" alt="The array month holds J a n u a r y followed by &#x27;\0&#x27; in element 7; elements 8 and 9 also hold &#x27;\0&#x27; and are unused" class="diagram" loading="lazy"
+width="600" /></p>
+</div><div class="column">
+<p>7 letters, then <code class="text">'\0'</code> in element 7. Elements
+8 and 9 are unused; a string literal sets them to <code
+class="text">'\0'</code> too.</p>
+</div>
+</div>
+<p><span class="alert">Every</span> statement that reads a string,
+<code>printf("%s", ...)</code>, <code
+class="sourceCode c">strlen<span class="op">()</span></code>, all of
+them, works by reading characters until it hits <code
+class="text">'\0'</code>.</p>
+</section>
+<section id="building-a-string-one-character-at-a-time" class="level3">
+<h3>Building a String One Character at a Time</h3>
+<p>Since a string is just an array, you can fill it by hand, element by
+element:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> month<span class="op">[</span><span class="dv">10</span><span class="op">];</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>month<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;M&#39;</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>month<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;a&#39;</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>month<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;y&#39;</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>month<span class="op">[</span><span class="dv">3</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;</span><span class="sc">\0</span><span class="ch">&#39;</span><span class="op">;</span>   <span class="co">// you must add this yourself!</span></span></code></pre></div>
+<p>Forget the <code class="text">'\0'</code> and <code
+class="sourceCode c">printf<span class="op">(</span><span class="st">&quot;</span><span class="er">\%</span><span class="st">s&quot;</span><span class="op">,</span> month<span class="op">)</span></code>
+keeps reading <span class="alert">past the end of the array</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+printing whatever garbage bytes happen to follow in memory, until it
+randomly finds a zero byte somewhere.</p>
+<div class="center">
+<p><img src="fig02.svg" alt="The array month holds M a y and &#x27;\0&#x27; in elements 0 to 3; elements 4 to 9 hold unknown leftover values" class="diagram" loading="lazy"
+width="760" /></p>
+</div>
+</section>
+<section id="forgetting-0" class="level3">
+<h3>Forgetting <code class="text">'\0'</code></h3>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(){</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> month<span class="op">[</span><span class="dv">10</span><span class="op">];</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  month<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;M&#39;</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  month<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;a&#39;</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  month<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;y&#39;</span><span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">//month[3] = &#39;\0&#39;;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%s\n</span><span class="st">&quot;</span><span class="op">,</span> month<span class="op">);</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="column">
+<p>Output after compiling then running the program a few times:</p>
+<pre class="text"><code>1st execution output: May#@!
+2nd execution output: May}Sr$
+3rd execution output: MaynTR%
+4th execution output: May</code></pre>
+</div>
+</div>
+<p>Notice that the 4th execution printed the correct string <code
+class="sourceCode c"><span class="st">&quot;May&quot;</span></code>!
+That run worked only because <code
+class="sourceCode c">month<span class="op">[</span><span class="dv">3</span><span class="op">]</span></code>
+happened to hold a <code
+class="sourceCode c"><span class="dv">0</span></code> byte. Failing to
+add <code class="text">'\0'</code> doesn’t always produce garbage
+output, but reading past the end of the characters you set is <span
+class="alert">undefined behavior</span>: you no longer have control over
+what the output will be.</p>
+</section>
+<section id="c-will-not-protect-you" class="level3">
+<h3>C Will Not Protect You</h3>
+<p>This is the central fact about strings in C:</p>
+<ul>
+<li><p>There is no bounds checking</p></li>
+<li><p>Reading or writing past the null terminator, or past the end of
+the array itself, is <span class="alert">undefined behavior</span>: it
+may crash, print garbage, or silently corrupt other variables</p></li>
+<li><p><em>You</em> are responsible for making sure the array is big
+enough and the terminator is where it should be</p></li>
+</ul>
+<p>Keep this in mind for the rest of the lecture
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+every string operation we cover is really a loop that trusts this
+convention.</p>
+</section>
+</section>
+<section id="strings-and-loops" class="level2">
+<h2>Strings and Loops</h2>
+<section id="a-string-is-just-an-array" class="level3">
+<h3>A String Is Just an Array</h3>
+<div class="columns">
+<div class="column">
+<p>We just saw that a string is a <code
+class="sourceCode c"><span class="dt">char</span></code> array with
+elements you can index. Walking it is a loop like the ones from previous
+weeks:</p>
+<ul>
+<li><p>Instead of looping a fixed number of times, we loop <span
+class="alert">until we see the terminator</span></p></li>
+<li><p>This one pattern, start at index 0 and keep going while <code
+class="text">word[i] != '\0'</code>, underlies almost every string
+operation you will ever write</p></li>
+</ul>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; int i = 0; word[i] != &#x27;\0&#x27;?; Print: word[i]; i = i + 1; Stop" class="diagram" loading="lazy"
+width="495" /></p>
+</div>
+</div>
+</div>
+</section>
+<section id="worked-example-counting-a-letter" class="level3">
+<h3>Worked Example: Counting a Letter</h3>
+<div class="columns">
+<div class="column">
+<p>How many times does <code
+class="sourceCode c"><span class="ch">&#39;l&#39;</span></code> appear
+in <code
+class="sourceCode c"><span class="st">&quot;hello&quot;</span></code>?</p>
+<p>Walk the array one index at a time and <span class="alert">stop at
+the terminator</span>.</p>
+<p>We never need to know the length in advance: the <code
+class="text">'\0'</code> tells the loop when to stop.</p>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; char letter = &#x27;l&#x27; int i = 0 int count = 0; word[i] != &#x27;\0&#x27;?; word[i] == letter?; count = count + 1; i = i + 1; Print: count; Stop" class="diagram" loading="lazy"
+width="680" /></p>
+</div>
+</div>
+</div>
+</section>
+<section id="try-it-letter-counter-walkthrough" class="level3">
+<h3>Try It: Letter Counter Walkthrough</h3>
+<div class="tryit">
+<p>Step through the flow diagram yourself and watch <code
+class="sourceCode c">i</code> walk along the word until it reaches the
+terminator:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/count-letter/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/count-letter/</code></a></span></p>
+</div>
+<ul>
+<li><p>Start with <code
+class="sourceCode c"><span class="st">&quot;hello&quot;</span></code>
+and <code
+class="sourceCode c"><span class="ch">&#39;l&#39;</span></code>, then
+try <code
+class="sourceCode c"><span class="st">&quot;banana&quot;</span></code>
+and <code
+class="sourceCode c"><span class="ch">&#39;a&#39;</span></code>, or a
+letter that never appears</p></li>
+</ul>
+</div>
+</section>
+<section id="worked-example-palindrome-checker" class="level3">
+<h3>Worked Example: Palindrome Checker</h3>
+<p>A palindrome reads the same forwards and backwards (<code
+class="sourceCode c"><span class="st">&quot;level&quot;</span></code>,
+<code
+class="sourceCode c"><span class="st">&quot;racecar&quot;</span></code>).</p>
+<p><span class="alert">Idea:</span> walk two indices inward from
+opposite ends, comparing as you go.</p>
+<div class="center">
+<p><img src="fig05.svg" alt="The word level in cells 0 to 4, with left pointing at index 0 and right at index 4, moving toward each other" class="diagram" loading="lazy"
+width="257" /></p>
+</div>
+</section>
+<section id="palindrome-checker-flow-diagram" class="level3">
+<h3>Palindrome Checker: Flow Diagram</h3>
+<p>Both exits from the loop (the condition going false, and the <code
+class="sourceCode c"><span class="cf">break</span></code>) lead to the
+final <code class="sourceCode c">is_palindrome</code> test.</p>
+<div class="center">
+<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;level&quot; int left = 0 int right = strlen(word) - 1 int is_palindrome = 1; left &lt; right?; word[left] != word[right]?; left++; right--; is_palindrome = 0 (then break); is_palindrome?; Print: word is a palindrome; Print: word is not a palindrome; Stop" class="diagram" loading="lazy"
+width="680" /></p>
+</div>
+</section>
+<section id="tracing-the-palindrome-checker" class="level3">
+<h3>Tracing the Palindrome Checker</h3>
+<p>Trace this loop by hand on <code
+class="sourceCode c"><span class="st">&quot;level&quot;</span></code>:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><strong>left</strong></th>
+<th style="text-align: center;"><strong>right</strong></th>
+<th style="text-align: center;"><strong>word[left] vs
+word[right]</strong></th>
+<th style="text-align: center;"><strong>match?</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><code
+class="sourceCode c"><span class="ch">&#39;l&#39;</span></code> vs <code
+class="sourceCode c"><span class="ch">&#39;l&#39;</span></code></td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><code
+class="sourceCode c"><span class="ch">&#39;e&#39;</span></code> vs <code
+class="sourceCode c"><span class="ch">&#39;e&#39;</span></code></td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">loop stops: <code
+class="sourceCode c">left <span class="op">&lt;</span> right</code> is
+false</td>
+<td style="text-align: center;">—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All comparisons matched, so <code
+class="sourceCode c">is_palindrome</code> stays <code
+class="sourceCode c"><span class="dv">1</span></code>.</p>
+<ul>
+<li><p>When <code class="sourceCode c">left</code> meets or passes <code
+class="sourceCode c">right</code>, every pair has been checked
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+the loop can stop</p></li>
+<li><p>The moment one pair <span class="alert">doesn’t</span> match,
+<code class="sourceCode c"><span class="cf">break</span></code> exits
+immediately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+no need to check the rest</p></li>
+</ul>
+</section>
+<section id="try-it-interactive-walkthrough" class="level3">
+<h3>Try It: Interactive Walkthrough</h3>
+<div class="tryit">
+<p>Step through the flow diagram yourself and watch <code
+class="sourceCode c">left</code> and <code
+class="sourceCode c">right</code> move along the word:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/palindrome/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/palindrome/</code></a></span></p>
+</div>
+<ul>
+<li><p>Start with <code
+class="sourceCode c"><span class="st">&quot;level&quot;</span></code>,
+then try <code
+class="sourceCode c"><span class="st">&quot;noon&quot;</span></code>
+(even length) and <code
+class="sourceCode c"><span class="st">&quot;label&quot;</span></code> (a
+mismatch triggers <code
+class="sourceCode c"><span class="cf">break</span></code>)</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="string.h" class="level2">
+<h2><code>&lt;string.h&gt;</code></h2>
+<section id="string.h-is-not-magic" class="level3">
+<h3><code>&lt;string.h&gt;</code> Is Not Magic</h3>
+<p>Every function in <code
+class="sourceCode c"><span class="op">&lt;</span>string<span class="op">.</span>h<span class="op">&gt;</span></code>
+is a loop like the ones you just wrote, following the <span
+class="alert">same null-terminator convention</span>.</p>
+<p><code
+class="sourceCode c">strlen<span class="op">(</span>word<span class="op">)</span></code>
+walks the array just like the letter counter: start at index 0, stop at
+<code class="text">'\0'</code>, return how far you got.</p>
+<p>The library version is more carefully optimized, but the <span
+class="alert">idea</span> is identical.</p>
+<p><span class="alert">Tutorial 6:</span> you will build the flow
+diagrams for the loops hidden inside <code
+class="sourceCode c">strlen</code>, <code
+class="sourceCode c">strcpy</code>, and <code
+class="sourceCode c">strcat</code> yourself.</p>
+</section>
+<section id="the-rest-of-the-library" class="level3">
+<h3>The Rest of the Library</h3>
+<p>Once you accept that <code class="sourceCode c">strlen</code> is
+“just a loop,” the rest of <code
+class="sourceCode c"><span class="op">&lt;</span>string<span class="op">.</span>h<span class="op">&gt;</span></code>
+is easier to trust:</p>
+<ul>
+<li><p><code
+class="sourceCode c">strcpy<span class="op">(</span>dest<span class="op">,</span> src<span class="op">)</span></code>
+– copies characters until it copies a <code
+class="text">'\0'</code></p></li>
+<li><p><code
+class="sourceCode c">strcmp<span class="op">(</span>a<span class="op">,</span> b<span class="op">)</span></code>
+– walks both strings together comparing characters</p></li>
+<li><p><code
+class="sourceCode c">strcat<span class="op">(</span>dest<span class="op">,</span> src<span class="op">)</span></code>
+– finds <code class="sourceCode c">dest</code>’s terminator, then copies
+<code class="sourceCode c">src</code> on from there</p></li>
+<li><p>Safer bounded versions exist too: <code
+class="sourceCode c">strncpy</code>, <code
+class="sourceCode c">strncat</code> – they take a maximum length so they
+can’t run past the end of your array</p></li>
+</ul>
+<p><span class="alert">We are not learning these today.</span> You will
+use each of them hands-on, and predict their output first, in
+<strong>Tutorial 6</strong>’s guided segment. For now, the point is:
+they all trust the same terminator convention <code
+class="sourceCode c">strlen</code> does.</p>
+</section>
+</section>
+<section id="reading-strings-safely" class="level2">
+<h2>Reading Strings Safely</h2>
+<section id="scanfs-...-stops-at-whitespace" class="level3">
+<h3><code>scanf("%s", ...)</code> Stops at Whitespace</h3>
+<p>You met this in Week 2:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">10</span><span class="op">];</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Enter your name: &quot;</span><span class="op">);</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%s</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span></span></code></pre></div>
+<ul>
+<li><p><code>%s</code> reads a single <span class="alert">word</span> –
+it stops at the first space, tab, or newline</p></li>
+<li><p>Type <code
+class="sourceCode c"><span class="st">&quot;Ryan Bradshaw&quot;</span></code>
+and <code class="sourceCode c">name</code> only gets <code
+class="sourceCode c"><span class="st">&quot;Ryan&quot;</span></code></p></li>
+<li><p>Worse: nothing stops <code>scanf("%s", name)</code> from writing
+past the end of a 10-byte array if you type more than 9
+characters</p></li>
+</ul>
+</section>
+<section id="fgets-reading-a-whole-line" class="level3">
+<h3><code class="sourceCode c">fgets<span class="op">()</span></code>:
+Reading a Whole Line</h3>
+<p><code class="sourceCode c">fgets<span class="op">()</span></code>
+reads an entire line, spaces included, <span class="alert">and</span>
+takes a size limit:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">];</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Enter your name: &quot;</span><span class="op">);</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fgets<span class="op">(</span>name<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>name<span class="op">),</span> stdin<span class="op">);</span></span></code></pre></div>
+<ul>
+<li><p><code
+class="sourceCode c"><span class="kw">sizeof</span><span class="op">(</span>name<span class="op">)</span></code>
+tells <code class="sourceCode c">fgets<span class="op">()</span></code>
+the array’s real size – it will <span class="alert">never</span> write
+more characters than that</p></li>
+<li><p><code class="sourceCode c">stdin</code> is the <span
+class="alert">standard input stream</span> – by default, whatever you
+type at the keyboard; it tells <code
+class="sourceCode c">fgets<span class="op">()</span></code>
+<em>where</em> to read from, the same way <code
+class="sourceCode c">scanf<span class="op">()</span></code> always reads
+from the keyboard implicitly</p></li>
+<li><p>It reads up to and including the newline character, and
+<em>keeps</em> the <code class="text">'\n'</code> in the string
+(something to watch for)</p></li>
+<li><p>This is why <code
+class="sourceCode c">fgets<span class="op">()</span></code> is the <span
+class="alert">safer</span> default for reading text from a user</p></li>
+</ul>
+</section>
+<section id="buffer-overflows" class="level3">
+<h3>Buffer Overflows</h3>
+<p>A <span class="alert">buffer overflow</span> happens when you write
+more characters into an array than it can hold:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> small<span class="op">[</span><span class="dv">5</span><span class="op">];</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>strcpy<span class="op">(</span>small<span class="op">,</span> <span class="st">&quot;this string is way too long&quot;</span><span class="op">);</span>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">// overflow!</span></span></code></pre></div>
+<ul>
+<li><p><code class="sourceCode c">strcpy</code> keeps copying past the
+end of <code class="sourceCode c">small</code> – it has no idea how big
+<code class="sourceCode c">small</code> is</p></li>
+<li><p>The extra bytes land on <span class="alert">whatever memory comes
+next</span> – other variables, or worse</p></li>
+<li><p>This is one of the most common bugs in C, and historically one of
+the most common <span class="alert">security vulnerabilities</span> in
+real software</p></li>
+</ul>
+<p><span class="alert">Always</span> give your array a size limit that
+any read or copy respects – a field width on <code
+class="sourceCode c">scanf</code> (<code
+class="sourceCode c"><span class="st">&quot;</span><span class="er">\%</span><span class="st">49s&quot;</span></code>
+for a 50-char array – see lecture 3) , <code
+class="sourceCode c"><span class="kw">sizeof</span></code> with <code
+class="sourceCode c">fgets</code>, or <code
+class="sourceCode c">strncpy</code>/<code
+class="sourceCode c">strncat</code> instead of their unbounded
+cousins.</p>
+</section>
+</section>
+<section id="why-arrays" class="level2">
+<h2>Why Arrays?</h2>
+<section id="the-problem-many-related-values" class="level3">
+<h3>The Problem: Many Related Values</h3>
+<p>Suppose you need to store the midterm marks for 30 students.</p>
+<ul>
+<li><p>One variable per student? <code
+class="sourceCode c">mark1<span class="op">,</span> mark2<span class="op">,</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>…</mi><annotation encoding="application/x-tex">\ldots</annotation></semantics></math>
+<code
+class="sourceCode c"><span class="op">,</span> mark30<span class="op">;</span></code></p></li>
+<li><p>That’s unworkable: no way to loop over them, no way to index by
+student number, and it doesn’t scale.</p></li>
+</ul>
+<p><span class="alert">An array lets you store a collection of values of
+the same type under a single name.</span> A string, which you just met,
+was already a special case of this: an array of <code
+class="sourceCode c"><span class="dt">char</span></code> .</p>
+</section>
+<section id="declaring-an-array" class="level3">
+<h3>Declaring an Array</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> marks<span class="op">[</span><span class="dv">30</span><span class="op">];</span>      <span class="co">// 30 integers</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> averages<span class="op">[</span><span class="dv">10</span><span class="op">];</span> <span class="co">// 10 floats</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">20</span><span class="op">];</span>       <span class="co">// 20 characters</span></span></code></pre></div>
+<ul>
+<li><p>The number in <code
+class="sourceCode c"><span class="op">[</span> <span class="op">]</span></code>
+at declaration time is the <strong>size</strong>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+how many elements to reserve space for.</p></li>
+<li><p>All elements share the same type and are the <strong>same
+size</strong> in memory.</p></li>
+<li><p>The elements are stored <strong>contiguously</strong>;
+back-to-back, in one unbroken block of memory — exactly like the <code
+class="sourceCode c"><span class="dt">char</span></code> array you just
+saw for strings.</p></li>
+</ul>
+</section>
+</section>
+<section id="indexing" class="level2">
+<h2>Indexing</h2>
+<section id="indexing-accessing-elements" class="level3">
+<h3>Indexing: Accessing Elements</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> marks<span class="op">[</span><span class="dv">30</span><span class="op">];</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>marks<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="dv">85</span><span class="op">;</span>   <span class="co">// first element</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>marks<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="dv">92</span><span class="op">;</span>   <span class="co">// second element</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>marks<span class="op">[</span><span class="dv">29</span><span class="op">]</span> <span class="op">=</span> <span class="dv">77</span><span class="op">;</span>  <span class="co">// last element</span></span></code></pre></div>
+<ul>
+<li><p>An index is an <strong>offset</strong> from the start of the
+array
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+<code
+class="sourceCode c">marks<span class="op">[</span>i<span class="op">]</span></code>
+means “the element <code class="sourceCode c">i</code> positions after
+the first one.”</p></li>
+<li><p>That’s exactly why indexing starts at <code
+class="sourceCode c"><span class="dv">0</span></code>: <code
+class="sourceCode c">marks<span class="op">[</span><span class="dv">0</span><span class="op">]</span></code>
+is 0 positions from the start
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+it <em>is</em> the start.</p></li>
+<li><p>For an array of size <code class="sourceCode c">N</code>, valid
+indices run from <code
+class="sourceCode c"><span class="dv">0</span></code> to <code
+class="sourceCode c">N<span class="op">-</span><span class="dv">1</span></code>.</p></li>
+</ul>
+</section>
+<section id="no-bounds-checking" class="level3">
+<h3>No Bounds Checking</h3>
+<p><span class="alert">C does not check that your index is in
+range.</span> You already know this rule for strings; it applies to
+every array.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> marks<span class="op">[</span><span class="dv">30</span><span class="op">];</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>marks<span class="op">[</span><span class="dv">30</span><span class="op">]</span> <span class="op">=</span> <span class="dv">100</span><span class="op">;</span>  <span class="co">// compiles. runs. corrupts something.</span></span></code></pre></div>
+<div class="center">
+<p><img src="fig07.svg" alt="The array marks has 30 elements, indices 0 to 29; index 30 is past the end and is not part of marks" class="diagram" loading="lazy"
+width="303" /></p>
+</div>
+<ul>
+<li><p><code
+class="sourceCode c">marks<span class="op">[</span><span class="dv">30</span><span class="op">]</span></code>
+is one past the last valid index (<code
+class="sourceCode c"><span class="dv">0</span></code>–<code
+class="sourceCode c"><span class="dv">29</span></code>); this is
+<strong>undefined behavior</strong>.</p></li>
+<li><p>It might crash. It might silently overwrite an unrelated
+variable. It might appear to work today and fail next week.</p></li>
+<li><p>There is no safety net; <strong>you</strong> are responsible for
+staying in bounds.</p></li>
+</ul>
+</section>
+<section id="try-it-array-index-explorer" class="level3">
+<h3>Try It: Array Index Explorer</h3>
+<div class="tryit">
+<p>Read and write <code
+class="sourceCode c">marks<span class="op">[</span>i<span class="op">]</span></code>
+for any index and see which memory it really touches:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/array-index/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/array-index/</code></a></span></p>
+</div>
+<ul>
+<li><p>Try <code
+class="sourceCode c">marks<span class="op">[</span><span class="dv">4</span><span class="op">]</span></code>,
+then write to <code
+class="sourceCode c">marks<span class="op">[</span><span class="dv">5</span><span class="op">]</span></code>
+and watch what happens to <code
+class="sourceCode c">total</code></p></li>
+</ul>
+</div>
+</section>
+<section id="initializing-arrays" class="level3">
+<h3>Initializing Arrays</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[</span><span class="dv">5</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">,</span> <span class="dv">77</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">100</span><span class="op">};</span></span></code></pre></div>
+<ul>
+<li><p>Listing more values than the declared size is a compile
+error.</p></li>
+<li><p>Listing fewer values leaves the remaining elements set to <code
+class="sourceCode c"><span class="dv">0</span></code>:</p></li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[</span><span class="dv">5</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">};</span>  <span class="co">// {90, 85, 0, 0, 0}</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">,</span> <span class="dv">77</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">100</span><span class="op">};</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">// size 5, inferred</span></span></code></pre></div>
+</section>
+</section>
+<section id="iterating-arrays-with-a-loop" class="level2">
+<h2>Iterating Arrays with a Loop</h2>
+<section id="the-standard-pattern" class="level3">
+<h3>The Standard Pattern</h3>
+<p>Arrays and <code
+class="sourceCode c"><span class="cf">for</span></code> loops belong
+together: the loop variable <em>is</em> the index. This is the same
+pattern you just used to walk strings, minus the null-terminator
+check.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[</span><span class="dv">5</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">,</span> <span class="dv">77</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">100</span><span class="op">};</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">, &quot;</span><span class="op">,</span> scores<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li><p>Start at <code
+class="sourceCode c">i <span class="op">=</span> <span class="dv">0</span></code>,
+stop <strong>before</strong> <code class="sourceCode c">i</code> reaches
+the size (<code
+class="sourceCode c">i <span class="op">&lt;</span> <span class="dv">5</span></code>,
+not <code
+class="sourceCode c">i <span class="op">&lt;=</span> <span class="dv">5</span></code>);
+this is what keeps you in bounds.</p></li>
+<li><p>This pattern; read, sum, search, compare; is how almost every
+array problem gets solved.</p></li>
+</ul>
+</section>
+<section id="why-not-strlen" class="level3">
+<h3>Why Not <code
+class="sourceCode c">strlen<span class="op">()</span></code>?</h3>
+<p>With strings we looped until <code
+class="sourceCode c">strlen<span class="op">()</span></code>; why
+hard-code <code class="sourceCode c"><span class="dv">5</span></code>
+here?</p>
+<ul>
+<li><p><code
+class="sourceCode c">strlen<span class="op">()</span></code> counts
+characters until it finds <code class="text">'\0'</code>; only <span
+class="alert">strings</span> carry that end marker.</p></li>
+<li><p>An <code class="sourceCode c"><span class="dt">int</span></code>
+array has no terminator: <code
+class="sourceCode c"><span class="dv">0</span></code> is a perfectly
+valid score, so nothing marks where the data stops.</p></li>
+<li><p>An array does <span class="alert">not</span> remember its own
+length, so <strong>you</strong> must track it.</p></li>
+</ul>
+<p>Rather than repeating <code
+class="sourceCode c"><span class="dv">5</span></code> everywhere, name
+it once (<code>#define</code> from lecture 3):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define NUM_SCORES </span><span class="dv">5</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[</span>NUM_SCORES<span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">,</span> <span class="dv">77</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">100</span><span class="op">};</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> NUM_SCORES<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+</section>
+<section id="example-sum-and-average" class="level3">
+<h3>Example: Sum and Average</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> scores<span class="op">[</span><span class="dv">5</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="dv">90</span><span class="op">,</span> <span class="dv">85</span><span class="op">,</span> <span class="dv">77</span><span class="op">,</span> <span class="dv">60</span><span class="op">,</span> <span class="dv">100</span><span class="op">};</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    sum <span class="op">+=</span> scores<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> average <span class="op">=</span> sum <span class="op">/</span> <span class="fl">5.0</span><span class="op">;</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Average: </span><span class="sc">%.2f\n</span><span class="st">&quot;</span><span class="op">,</span> average<span class="op">);</span></span></code></pre></div>
+<ul>
+<li><p>Accumulate into a variable declared <em>before</em> the loop,
+initialized to <code
+class="sourceCode c"><span class="dv">0</span></code>; the same
+accumulator pattern from earlier weeks, now driven by an index instead
+of input.</p></li>
+</ul>
+</section>
+</section>
+<section id="two-dimensional-arrays" class="level2">
+<h2>Two-Dimensional Arrays</h2>
+<section id="declaring-a-2d-array" class="level3">
+<h3>Declaring a 2D Array</h3>
+<p>An array can hold rows of arrays, forming a grid:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> grid<span class="op">[</span><span class="dv">2</span><span class="op">][</span><span class="dv">3</span><span class="op">];</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 2 rows, 3 columns --&gt; 6 elements</span></span></code></pre></div>
+<p>Access an element with two indices, row then column:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="dv">9</span><span class="op">;</span></span></code></pre></div>
+</section>
+<section id="row-major-order" class="level3">
+<h3>Row-Major Order</h3>
+<div class="center">
+<p><img src="fig08.svg" alt="A 2D array with 2 rows and 3 columns, grid[0][0] to grid[1][2], with arrows showing it is read row by row" class="diagram" loading="lazy"
+width="452" /></p>
+</div>
+<p>It <em>looks</em> like a grid, but C actually stores it as one
+<strong>contiguous strip</strong> of memory, traversed in the order the
+<span style="color: red">arrow</span> follows:</p>
+<div class="center">
+<p><code
+class="sourceCode c">grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">],</span> grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">],</span> grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">2</span><span class="op">],</span> grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">],</span> grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">1</span><span class="op">],</span> grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">2</span><span class="op">]</span></code></p>
+</div>
+<p>Row 0 is laid out completely, then row 1 immediately after it
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+this is <strong>row-major order</strong>.</p>
+</section>
+<section id="finding-an-element-in-the-strip-offset" class="level3">
+<h3>Finding an Element in the Strip: Offset</h3>
+<p>Because the grid is really one strip, every element has an <span
+class="alert">offset</span>: how many elements it sits from the start of
+the strip (just like a 1D index).</p>
+<div class="center">
+<p><img src="fig09.svg" alt="The same 2D array laid out as one strip of memory: row 0 then row 1, offsets 0 to 5; grid[1][2] is at offset 5" class="diagram" loading="lazy"
+width="467" /></p>
+</div>
+<p>To reach <code
+class="sourceCode c">grid<span class="op">[</span>row<span class="op">][</span>col<span class="op">]</span></code>:
+skip <code class="sourceCode c">row</code> full rows, then move <code
+class="sourceCode c">col</code> more:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">offset</mtext><mo>=</mo><mtext mathvariant="monospace">𝚛𝚘𝚠</mtext><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">elements per row</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mtext mathvariant="monospace">𝚌𝚘𝚕</mtext></mrow><annotation encoding="application/x-tex">\text{offset} = \texttt{row} \times (\text{elements per row}) + \texttt{col}</annotation></semantics></math></p>
+<p><code
+class="sourceCode c">grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">2</span><span class="op">]</span></code>:
+skip 1 row of 3, then 2 more
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>𝟓</mn></mrow><annotation encoding="application/x-tex">1 \times 3 + 2 = \mathbf{5}</annotation></semantics></math>.
+C does this arithmetic for you every time you write <code
+class="sourceCode c">grid<span class="op">[</span>row<span class="op">][</span>col<span class="op">]</span></code>.</p>
+</section>
+<section id="iterating-a-2d-array" class="level3">
+<h3>Iterating a 2D Array</h3>
+<p>Same nested-loop pattern from Week 5; outer loop over rows, inner
+loop over columns:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> grid<span class="op">[</span><span class="dv">2</span><span class="op">][</span><span class="dv">3</span><span class="op">]</span> <span class="op">=</span> <span class="op">{{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">},</span> <span class="op">{</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">}};</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> row <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> row <span class="op">&lt;</span> <span class="dv">2</span><span class="op">;</span> row<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> col <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> col <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> col<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> &quot;</span><span class="op">,</span> grid<span class="op">[</span>row<span class="op">][</span>col<span class="op">]);</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li><p>Outer loop index selects the row; inner loop index sweeps across
+the columns of that row.</p></li>
+<li><p>This is sufficient for most intro-level use; dynamically-sized 2D
+grids are a later-course topic.</p></li>
+</ul>
+</section>
+<section id="try-it-2d-array-walkthrough" class="level3">
+<h3>Try It: 2D Array Walkthrough</h3>
+<div class="tryit">
+<p>Step through the nested loop and watch each element light up in the
+grid <em>and</em> in memory:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/2d-array/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/2d-array/</code></a></span></p>
+</div>
+<ul>
+<li><p>Watch the jump from <code
+class="sourceCode c">grid<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">2</span><span class="op">]</span></code>
+to <code
+class="sourceCode c">grid<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span></code>:
+in memory it is just the next cell</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2>Summary</h2>
+<section id="summary-1" class="level3">
+<h3>Summary</h3>
+<ul>
+<li><p>A string is a <code
+class="sourceCode c"><span class="dt">char</span></code> array ending in
+<code class="text">'\0'</code> – nothing more</p></li>
+<li><p>Every loop pattern from Week 5 applies: walk the array until you
+hit the terminator (strings) or the size (arrays)</p></li>
+<li><p><code
+class="sourceCode c"><span class="op">&lt;</span>string<span class="op">.</span>h<span class="op">&gt;</span></code>
+functions – <code class="sourceCode c">strlen</code>, <code
+class="sourceCode c">strcpy</code>, <code
+class="sourceCode c">strcmp</code>, <code
+class="sourceCode c">strcat</code>, and their safer <code
+class="sourceCode c">strn</code> versions – are loops like yours,
+following the same rule (full tour in Tutorial 6)</p></li>
+<li><p><code
+class="sourceCode c">scanf<span class="op">(</span><span class="st">&quot;</span><span class="er">\%</span><span class="st">s&quot;</span><span class="op">,</span> <span class="op">...)</span></code>
+reads one word; <code
+class="sourceCode c">fgets<span class="op">()</span></code> reads a
+whole line and respects a size limit</p></li>
+</ul>
+<ul>
+<li><p>C never checks array bounds for you – writing past the end is a
+<span class="alert">buffer overflow</span> for strings, or plain <span
+class="alert">undefined behavior</span> for any other array; it’s on you
+to prevent it</p></li>
+<li><p><strong>Arrays</strong>: a collection of same-typed values in one
+contiguous block, indexed from <code
+class="sourceCode c"><span class="dv">0</span></code>; <code
+class="sourceCode c"><span class="cf">for</span></code> loops are the
+standard way to walk them, one dimension or two</p></li>
+</ul>
+</section>
+</section>
+<nav class="pager">
+<a class="prev" href="../lecture05/"><span class="label">← Previous</span>Week
+5: Loops</a>
+
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

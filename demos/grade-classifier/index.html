@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grade Classifier Walkthrough</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #a9aab2;
+    --node: #ffffff;
+    --visited: #eef1f6;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --left: #d9480f;
+    --right: #7048e8;
+    --ok: #2b8a3e;
+    --ok-soft: #d3f9d8;
+    --bad: #c92a2a;
+    --bad-soft: #ffe0e0;
+    --term: #e9e9ec;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518;
+      --panel: #1e1f23;
+      --ink: #ececf0;
+      --muted: #9b9ca5;
+      --line: #5a5b63;
+      --node: #25262b;
+      --visited: #2b2e36;
+      --accent: #6ea0ff;
+      --accent-soft: #1d3157;
+      --left: #ff8a50;
+      --right: #a98bff;
+      --ok: #69db7c;
+      --ok-soft: #1c3a24;
+      --bad: #ff8787;
+      --bad-soft: #4a1f22;
+      --term: #2c2d33;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5; --line: #5a5b63;
+    --node: #25262b; --visited: #2b2e36; --accent: #6ea0ff; --accent-soft: #1d3157;
+    --left: #ff8a50; --right: #a98bff; --ok: #69db7c; --ok-soft: #1c3a24;
+    --bad: #ff8787; --bad-soft: #4a1f22; --term: #2c2d33; --shadow: 0 1px 3px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .mono, code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+  header { max-width: 1280px; margin: 0 auto; padding: 20px 16px 4px; }
+  h1 { font-size: 1.45rem; margin: 0 0 4px; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); }
+
+  main {
+    max-width: 1280px; margin: 0 auto; padding: 12px 16px 32px;
+    display: grid; gap: 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: start;
+  }
+  @media (max-width: 920px) { main { grid-template-columns: minmax(0, 1fr); } }
+
+  .card {
+    background: var(--panel); border-radius: 14px; box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .card h2 {
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 0 0 10px;
+  }
+
+  /* ---------- Flow diagram ---------- */
+  .diagram { position: sticky; top: 12px; }
+  @media (max-width: 920px) { .diagram { position: static; } }
+  svg.flow { width: 100%; height: auto; display: block; max-height: calc(100vh - 60px); }
+  .flow text { fill: var(--ink); font-size: 14px; text-anchor: middle; dominant-baseline: central; }
+  .flow text.code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13.5px; }
+  .flow .node > :is(rect, polygon, circle) {
+    fill: var(--node); stroke: var(--line); stroke-width: 1.6;
+    transition: fill .25s, stroke .25s, stroke-width .25s;
+  }
+  .flow .node.visited > :is(rect, polygon, circle) { fill: var(--visited); }
+  .flow .node.active > :is(rect, polygon, circle) {
+    fill: var(--accent-soft); stroke: var(--accent); stroke-width: 3.2;
+    filter: drop-shadow(0 0 6px var(--accent));
+  }
+  .flow .edge { fill: none; stroke: var(--line); stroke-width: 1.6; marker-end: url(#arrow); transition: stroke .25s; }
+  .flow .edge.visited { stroke: var(--muted); }
+  .flow .edge.active {
+    stroke: var(--accent); stroke-width: 3.2; marker-end: url(#arrow-active);
+    stroke-dasharray: 8 6; animation: flow 0.6s linear infinite;
+  }
+  @keyframes flow { to { stroke-dashoffset: -14; } }
+  .flow .arrowhead { fill: var(--line); }
+  .flow .arrowhead-active { fill: var(--accent); }
+  .flow .elabel { font-size: 12.5px; font-weight: 600; fill: var(--muted); }
+  .flow .elabel.active { fill: var(--accent); }
+  .flow .bodybox { fill: none; stroke: var(--muted); stroke-dasharray: 6 5; stroke-width: 1.3; }
+  .flow .bodylabel { font-size: 13px; font-weight: 700; text-anchor: start; fill: var(--muted); }
+  .flow .badge rect { fill: var(--accent); }
+  .flow .badge text { fill: #fff; font-size: 12px; font-weight: 700; }
+  .flow .badge.false rect { fill: var(--muted); }
+
+  /* ---------- Right column ---------- */
+  .side { display: grid; gap: 16px; }
+
+  .wordbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .wordbar label { font-weight: 600; margin-right: 2px; }
+  .wordbar input {
+    font: inherit; font-family: ui-monospace, Menlo, Consolas, monospace;
+    padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--line);
+    background: var(--node); color: var(--ink); width: 9.5em;
+  }
+  .wordbar input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    font: inherit; cursor: pointer; border-radius: 8px; border: 1.5px solid var(--line);
+    background: var(--node); color: var(--ink); padding: 6px 12px;
+  }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: .4; cursor: default; border-color: var(--line); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .preset { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9rem; padding: 4px 10px; }
+  .hint { color: var(--muted); font-size: .85rem; }
+
+  /* array */
+  .array-wrap { position: relative; padding: 52px 0 52px; margin: 0 auto; }
+  .cells { display: flex; gap: var(--gap); }
+  .col { width: var(--cell); display: flex; flex-direction: column; align-items: center; }
+  .cell {
+    width: var(--cell); height: var(--cell); border-radius: 8px;
+    border: 2px solid var(--line); background: var(--node);
+    display: grid; place-items: center;
+    font: 700 calc(var(--cell) * .48) ui-monospace, Menlo, Consolas, monospace;
+    transition: background .3s, border-color .3s, transform .3s;
+  }
+  .cell.term { background: var(--term); color: var(--muted); font-size: calc(var(--cell) * .32); border-style: dashed; }
+  .cell.done { background: var(--ok-soft); border-color: var(--ok); }
+  .cell.cmp-ok { background: var(--ok-soft); border-color: var(--ok); transform: translateY(-3px); box-shadow: 0 0 0 3px var(--ok-soft); }
+  .cell.cmp-bad { background: var(--bad-soft); border-color: var(--bad); transform: translateY(-3px); box-shadow: 0 0 0 3px var(--bad-soft); }
+  .idx { font: 12px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); margin-top: 3px; }
+  .ptr {
+    position: absolute; transform: translateX(-50%);
+    left: calc(var(--i) * (var(--cell) + var(--gap)) + var(--cell) / 2);
+    display: flex; flex-direction: column; align-items: center;
+    font-weight: 700; font-size: 14px; line-height: 1.1;
+    transition: left .5s cubic-bezier(.4,.1,.2,1), opacity .3s;
+  }
+  .ptr.hidden { opacity: 0; }
+  .ptr .tri { font-size: 18px; }
+  .ptr.left { top: 6px; color: var(--left); }
+  .ptr.right { bottom: 4px; color: var(--right); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .82rem; color: var(--muted); justify-content: center; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; border: 1.5px solid; }
+
+  /* variables */
+  .vars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .var { border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 10px; text-align: center; }
+  .var .name { font: 600 13px ui-monospace, Menlo, Consolas, monospace; }
+  .var .val { font: 700 28px ui-monospace, Menlo, Consolas, monospace; line-height: 1.25; }
+  .var .sub { font-size: 12px; color: var(--muted); min-height: 1.3em; }
+  .var.left .name { color: var(--left); }
+  .var.right .name { color: var(--right); }
+  .var.changed { animation: pulse .9s ease-out; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent); background: var(--accent-soft); } 100% { box-shadow: 0 0 0 10px transparent; } }
+
+  /* explanation */
+  .explain .where { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+  .explain .msg { min-height: 4.5em; }
+  .explain b { color: var(--accent); }
+  .output {
+    margin-top: 10px; font: 14px ui-monospace, Menlo, Consolas, monospace;
+    background: #111; color: #e6e6e6; border-radius: 8px; padding: 8px 12px; min-height: 2.4em;
+  }
+  .output .prompt { color: #8a8a8a; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  .counter { margin-left: auto; color: var(--muted); font-size: .9rem; }
+  .progress { height: 4px; background: var(--visited); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+
+  /* trace */
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { padding: 5px 8px; text-align: center; border-bottom: 1px solid var(--visited); }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; }
+  td.mono { white-space: nowrap; }
+  td.yes { color: var(--ok); font-weight: 700; }
+  td.no { color: var(--bad); font-weight: 700; }
+  tr.latest { background: var(--accent-soft); }
+  .empty { color: var(--muted); font-style: italic; text-align: center; padding: 8px; }
+
+  /* shared additions */
+  .output { max-height: 10.5em; overflow: auto; }
+  .output .prompt { font-size: 12px; margin-bottom: 2px; }
+  .output pre { margin: 0; font: inherit; white-space: pre-wrap; }
+  .trace-wrap { max-height: 330px; overflow: auto; }
+  .t { color: var(--ok); font-weight: 700; }
+  .f { color: var(--muted); font-weight: 600; }
+  .cell.small { font-size: calc(var(--cell) * .3); }
+  .cell.hit { background: var(--ok-soft); border-color: var(--ok); }
+  .cell.bad { background: var(--bad-soft); border-color: var(--bad); }
+  .cell.zone { background: var(--term); color: var(--muted); border-style: dashed; }
+  .cell.current { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .cell.stopcell { border-color: var(--accent); border-style: solid; color: var(--accent); transform: translateY(-3px); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .ptr.p { top: 6px; color: var(--left); }
+  .array-wrap { padding-bottom: 8px; }
+  .var.p .name { color: var(--left); }
+  .var.q .name { color: var(--right); }
+  .wordbar input[type=number] { width: 6em; }
+  .wordbar input.wide { width: 12em; }
+  .wordbar select { font: inherit; padding: 5px 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--node); color: var(--ink); }
+  .controls select { font: inherit; font-size: .9rem; padding: 5px 6px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--node); color: var(--ink); }
+  .side, .side > .card { min-width: 0; }
+  .note { font-size: .88rem; color: var(--muted); margin-top: 10px; }
+  kbd { font: 12px ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+
+  .wordbar input[type=range] { flex: 1 1 160px; accent-color: var(--accent); }
+  .scale { position: relative; margin: 46px 4px 6px; }
+  .bands { display: flex; height: 40px; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--line); }
+  .band { display: grid; place-items: center; font-size: .82rem; font-weight: 700; color: var(--muted);
+          border-right: 1.5px solid var(--line); background: var(--node); transition: background .3s, color .3s; }
+  .band:last-child { border-right: 0; }
+  .band.on { background: var(--ok-soft); color: var(--ok); }
+  .ticks { position: relative; height: 18px; font: 12px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+  .ticks span { position: absolute; transform: translateX(-50%); top: 2px; }
+  .marker { position: absolute; top: -40px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;
+            color: var(--left); font-weight: 700; font-size: 14px; line-height: 1.1; transition: left .4s; }
+  .marker .tri { font-size: 18px; }
+  .toggle { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-size: .92rem; }
+  .toggle input { width: 18px; height: 18px; accent-color: var(--bad); }
+  .bugnote { color: var(--bad); font-weight: 600; }
+
+  /* data-type keywords in the flow diagram */
+  :root { --type: #0c8599; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --type: #3bc9db; } }
+  :root[data-theme="dark"] { --type: #3bc9db; }
+  .flow .kw { fill: var(--type); font-weight: 700; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  header .theme-toggle { float: right; margin: 0 0 8px 12px; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<header>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+  <h1>Grade Classifier: An else-if Chain</h1>
+  <p>Pick a score and follow its path through the chain of diamonds. The first True test wins, so the order of the tests matters.
+     Keys: <kbd>→</kbd>/<kbd>Space</kbd> next, <kbd>←</kbd> back, <kbd>R</kbd> reset.</p>
+</header>
+
+<main>
+  <section class="card diagram" aria-label="Flow diagram">
+    <svg class="flow" viewBox="0 0 620 700" role="img" aria-label="Grade Classifier: An else-if Chain flow diagram">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path class="arrowhead" d="M0,0 L10,5 L0,10 z"/>
+        </marker>
+        <marker id="arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path class="arrowhead-active" d="M0,0 L10,5 L0,10 z"/>
+        </marker>
+      </defs>
+
+      <path class="edge" id="e-start-declare" d="M310 60 V90"/>
+      <path class="edge" id="e-declare-input" d="M310 140 V165"/>
+      <path class="edge" id="e-input-d1"      d="M310 215 V248"/>
+      <path class="edge" id="e-d1-pa"         d="M395 290 H437"/>
+      <path class="edge" id="e-d1-d2"         d="M310 332 V378"/>
+      <path class="edge" id="e-d2-pb"         d="M225 420 H183"/>
+      <path class="edge" id="e-d2-pf"         d="M310 462 V512"/>
+      <path class="edge" id="e-pa-stop"       d="M510 318 V660 H370"/>
+      <path class="edge" id="e-pb-stop"       d="M110 448 V660 H250"/>
+      <path class="edge" id="e-pf-stop"       d="M310 568 V640"/>
+
+      <text class="elabel" data-edge="e-d1-pa" x="416" y="278">True</text>
+      <text class="elabel" data-edge="e-d1-d2" x="334" y="356">False</text>
+      <text class="elabel" data-edge="e-d2-pb" x="204" y="408">True</text>
+      <text class="elabel" data-edge="e-d2-pf" x="334" y="488">False</text>
+
+      <g class="node" id="n-start"><rect x="250" y="20" width="120" height="40" rx="20"/><text x="310" y="40">Start</text></g>
+      <g class="node" id="n-declare"><rect x="210" y="90" width="200" height="50" rx="4"/>
+        <text x="310" y="106">Declare variables:</text><text class="code" x="310" y="125"><tspan class="kw">int</tspan> score;</text></g>
+      <g class="node" id="n-input"><polygon points="202,165 430,165 418,215 190,215"/>
+        <text x="310" y="190">Prompt user and read <tspan class="code" style="font-family:ui-monospace,Menlo,Consolas,monospace">score</tspan></text></g>
+      <g class="node" id="n-d1"><polygon points="310,248 395,290 310,332 225,290"/>
+        <text class="code" x="310" y="290" id="d1-text">score ≥ 90?</text></g>
+      <g class="node" id="n-d2"><polygon points="310,378 395,420 310,462 225,420"/>
+        <text class="code" x="310" y="420" id="d2-text">score ≥ 70?</text></g>
+      <g class="node" id="n-pa"><polygon points="449,262 585,262 573,318 437,318"/>
+        <text x="511" y="290" id="pa-text">Print 'A'</text></g>
+      <g class="node" id="n-pb"><polygon points="47,392 183,392 171,448 35,448"/>
+        <text x="109" y="420" id="pb-text">Print 'B'</text></g>
+      <g class="node" id="n-pf"><polygon points="207,512 425,512 413,568 195,568"/>
+        <text x="310" y="531">Print “Go to</text><text x="310" y="550">office hours!”</text></g>
+      <g class="node" id="n-stop"><rect x="250" y="640" width="120" height="40" rx="20"/><text x="310" y="660">Stop</text></g>
+
+      <g class="badge" id="badge" style="display:none">
+        <rect x="0" y="0" width="54" height="22" rx="11"/>
+        <text x="27" y="11">True</text>
+      </g>
+    </svg>
+  </section>
+
+  <div class="side">
+    <section class="card">
+
+      <h2>The score</h2>
+      <div class="wordbar">
+        <label for="score">Score:</label>
+        <input id="slider" type="range" min="0" max="100" value="75" aria-label="Score slider">
+        <input id="score" type="number" min="0" max="100" value="75">
+      </div>
+      <div class="wordbar" style="margin-top:8px">
+        <span class="hint">or try:</span>
+        <button class="preset">95</button>
+        <button class="preset">90</button>
+        <button class="preset">89</button>
+        <button class="preset">70</button>
+        <button class="preset">42</button>
+      </div>
+      <div class="scale">
+        <div class="marker" id="marker"><span id="markerVal">75</span><span class="tri">▼</span></div>
+        <div class="bands" id="bands"></div>
+        <div class="ticks"><span style="left:0%">0</span><span style="left:70%">70</span><span style="left:90%">90</span><span style="left:100%">100</span></div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="swap"> Swap the order of the two diamonds <span class="bugnote">(bug!)</span></label>
+    </section>
+
+    <section class="card">
+      <h2>Variables</h2>
+      <div class="vars" id="vars"></div>
+    </section>
+
+    <section class="card explain" aria-live="polite">
+      <h2>What's happening</h2>
+      <div class="where" id="where"></div>
+      <div class="msg" id="msg"></div>
+      <div class="output"><div class="prompt">output</div><pre id="out"></pre></div>
+      <div class="controls">
+        <button id="reset" title="Reset (R)">⟲ Reset</button>
+        <button id="prev" title="Back (←)">◀ Back</button>
+        <button id="next" class="primary" title="Next (→ or Space)">Next ▶</button>
+        <button id="play">▶ Auto-play</button>
+        <select id="speed" aria-label="Auto-play speed">
+          <option value="2200">Slow</option>
+          <option value="1400" selected>Normal</option>
+          <option value="600">Fast</option>
+        </select>
+        <span class="counter" id="counter"></span>
+      </div>
+      <div class="progress"><div id="bar"></div></div>
+    </section>
+
+    <section class="card">
+      <h2>Trace table</h2>
+      <div class="trace-wrap" id="traceWrap">
+        <table>
+          <thead id="traceHead"></thead>
+          <tbody id="trace"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const tf = b => b ? '<span class="t">True</span>' : '<span class="f">False</span>';
+
+  /* cells: items = [{text, cls, idx}] */
+  function buildCells(wrapId, cellsId, items) {
+    $(cellsId).innerHTML = items.map((it, k) =>
+      `<div class="col"><div class="cell ${it.cls || ''}" data-k="${k}">${it.text}</div><div class="idx">${it.idx ?? ''}</div></div>`).join('');
+    $(wrapId).dataset.k = items.length;
+    sizeCells($(wrapId));
+  }
+  function sizeCells(wrap) {
+    const k = +wrap.dataset.k, gap = 6;
+    if (!k) return;
+    const avail = wrap.parentElement.clientWidth - 8;
+    const cell = Math.max(24, Math.min(54, Math.floor((avail - gap * (k - 1)) / k)));
+    wrap.style.setProperty('--cell', cell + 'px');
+    wrap.style.setProperty('--gap', gap + 'px');
+    wrap.style.width = (k * cell + (k - 1) * gap) + 'px';
+  }
+  window.addEventListener('resize', () => document.querySelectorAll('.array-wrap').forEach(sizeCells));
+
+  function makeDemo(cfg) {
+    let steps = [], cur = 0, timer = null;
+    $('vars').style.gridTemplateColumns = `repeat(${cfg.vars.length}, minmax(0, 1fr))`;
+    $('vars').innerHTML = cfg.vars.map(v =>
+      `<div class="var ${v.cls || ''}" id="v-${v.id}"><div class="name">${v.label}</div><div class="val">—</div><div class="sub"></div></div>`).join('');
+    $('traceHead').innerHTML = '<tr>' + cfg.traceCols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+
+    function render(animate) {
+      const s = steps[cur], prev = animate && cur > 0 ? steps[cur - 1] : null;
+
+      document.querySelectorAll('.flow .node, .flow .edge, .flow .elabel').forEach(e => e.classList.remove('active', 'visited'));
+      for (let k = 0; k < cur; k++) {
+        $('n-' + steps[k].node).classList.add('visited');
+        if (steps[k].edge) $(steps[k].edge).classList.add('visited');
+      }
+      $('n-' + s.node).classList.add('active');
+      if (s.edge) {
+        $(s.edge).classList.add('active');
+        document.querySelectorAll(`.elabel[data-edge="${s.edge}"]`).forEach(l => l.classList.add('active'));
+      }
+      const badge = $('badge');
+      if (s.badge === true || s.badge === false) {
+        const pos = cfg.badgePos[s.node];
+        badge.style.display = '';
+        badge.setAttribute('transform', `translate(${pos[0]} ${pos[1]})`);
+        badge.classList.toggle('false', !s.badge);
+        badge.querySelector('text').textContent = s.badge ? 'True' : 'False';
+      } else badge.style.display = 'none';
+
+      cfg.vars.forEach(v => {
+        const box = $('v-' + v.id), val = s.vars[v.id], sub = (s.subs && s.subs[v.id]) || '';
+        box.querySelector('.val').innerHTML = (val === null || val === undefined) ? '—' : val;
+        box.querySelector('.sub').innerHTML = sub;
+        if (prev && prev.vars[v.id] !== val && val !== null && val !== undefined) {
+          box.classList.remove('changed'); void box.offsetWidth; box.classList.add('changed');
+        }
+      });
+
+      $('where').textContent = s.where || cfg.names[s.node];
+      $('msg').innerHTML = s.msg;
+      const out = $('out');
+      out.textContent = s.out || '';
+      out.parentElement.scrollTop = out.parentElement.scrollHeight;
+      $('counter').textContent = `Step ${cur + 1} / ${steps.length}`;
+      $('bar').style.width = (100 * cur / Math.max(1, steps.length - 1)) + '%';
+      $('prev').disabled = cur === 0;
+      $('next').disabled = cur === steps.length - 1;
+
+      const tb = $('trace');
+      tb.innerHTML = !s.trace.length
+        ? `<tr><td colspan="${cfg.traceCols.length}" class="empty">${cfg.traceEmpty}</td></tr>`
+        : s.trace.map((r, k) => `<tr${k === s.trace.length - 1 && s.traceLatest ? ' class="latest"' : ''}>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+      const tw = $('traceWrap');
+      tw.scrollTop = tw.scrollHeight;
+
+      cfg.renderExtra(s);
+    }
+
+    const speed = () => +$('speed').value;
+    function go(k) { cur = Math.max(0, Math.min(steps.length - 1, k)); render(true); if (cur === steps.length - 1) stop(); }
+    function stop() { clearInterval(timer); timer = null; $('play').textContent = '▶ Auto-play'; }
+    function play() {
+      if (timer) return stop();
+      if (cur === steps.length - 1) go(0);
+      $('play').textContent = '⏸ Pause';
+      timer = setInterval(() => go(cur + 1), speed());
+    }
+    $('speed').onchange = () => { if (timer) { stop(); play(); } };
+    $('next').onclick = () => { stop(); go(cur + 1); };
+    $('prev').onclick = () => { stop(); go(cur - 1); };
+    $('reset').onclick = () => { stop(); go(0); };
+    $('play').onclick = play;
+    document.addEventListener('keydown', e => {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); stop(); go(cur + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); stop(); go(cur - 1); }
+      else if (e.key === 'r' || e.key === 'R') { stop(); go(0); }
+    });
+
+    return {
+      load(params) {
+        stop();
+        steps = cfg.build(params);
+        cur = 0;
+        cfg.onLoad(params);
+        render(false);
+      }
+    };
+  }
+
+
+  let swapped = false;
+  const BANDS = {
+    normal:  [{ w: 70, label: 'office hours', g: 'F' }, { w: 20, label: 'B', g: 'B' }, { w: 10, label: 'A', g: 'A' }],
+    swapped: [{ w: 70, label: 'office hours', g: 'F' }, { w: 30, label: 'B (A is unreachable!)', g: 'B' }]
+  };
+  const demo = makeDemo({
+    names: { start: 'Start', declare: 'Declare variables', input: 'Input: prompt and read score',
+             d1: 'Decision: first diamond', d2: 'Decision: second diamond', pa: 'Output', pb: 'Output', pf: 'Output', stop: 'Stop' },
+    vars: [{ id: 'score', label: 'score', cls: 'p' }, { id: 'grade', label: 'printed' }],
+    traceCols: ['Diamond', 'Test', 'Result'],
+    traceEmpty: 'No tests yet',
+    badgePos: { d1: [383, 312], d2: [383, 442] },
+    build({ score, swapped }) {
+      const T = swapped ? [{ th: 70, g: 'B' }, { th: 90, g: 'A' }] : [{ th: 90, g: 'A' }, { th: 70, g: 'B' }];
+      const right = score >= 90 ? 'A' : score >= 70 ? 'B' : null;
+      const steps = [];
+      let sc = null, grade = null, out = '', trace = [];
+      const push = s => steps.push(Object.assign({ vars: { score: sc, grade }, out, trace: trace.slice(), result: null }, s));
+
+      push({ node: 'start', msg: `<b>Start</b>. Read a score from 0 to 100 and print its letter grade.` +
+        (swapped ? ` <span class="bugnote">The two diamonds have been swapped: watch what happens to high scores.</span>` : '') });
+      push({ node: 'declare', edge: 'e-start-declare', msg: `Reserve a box named <b>score</b> for a whole number.` });
+      sc = score; out += `Enter a score (0-100): ${score}\n`;
+      push({ node: 'input', edge: 'e-declare-input', msg: `The user types <b>${score}</b>, so <b>score = ${score}</b>.` });
+
+      const finish = (node, edge, g, text) => {
+        grade = g === 'F' ? 'office hours' : `'${g}'`; out += text + '\n';
+        let msg = `Print <b>${esc(text)}</b>.`;
+        if (swapped && g === 'B' && right === 'A')
+          msg += ` <span class="bugnote">Bug! ${score} should be an A. But "score ≥ 70" is True for every A score too, and the first True test wins, so the A branch can never run.</span> Check the strictest boundary first.`;
+        push({ node, edge, result: g, msg });
+        push({ node: 'stop', edge: node === 'pa' ? 'e-pa-stop' : node === 'pb' ? 'e-pb-stop' : 'e-pf-stop', result: g,
+          msg: `<b>Stop</b>. All three output boxes lead to the same Stop: exactly <i>one</i> branch of an else-if chain runs.` });
+      };
+
+      const c1 = score >= T[0].th;
+      trace.push(['first', `${score} ≥ ${T[0].th}`, tf(c1)]);
+      push({ node: 'd1', edge: 'e-input-d1', badge: c1, traceLatest: true,
+        msg: `Is score ≥ ${T[0].th}? &nbsp;${score} ≥ ${T[0].th} → <b>${c1 ? 'True' : 'False'}</b>. ` +
+             (c1 ? `Take the True branch. The rest of the chain is skipped.` : `Move down to the next diamond.`) });
+      if (c1) { finish('pa', 'e-d1-pa', T[0].g, `Grade: ${T[0].g}`); return steps; }
+
+      const c2 = score >= T[1].th;
+      trace.push(['second', `${score} ≥ ${T[1].th}`, tf(c2)]);
+      push({ node: 'd2', edge: 'e-d1-d2', badge: c2, traceLatest: true,
+        msg: `Is score ≥ ${T[1].th}? &nbsp;${score} ≥ ${T[1].th} → <b>${c2 ? 'True' : 'False'}</b>. ` +
+             (c2 ? (swapped ? `Take the True branch.` : `We only get here when the score is <i>below 90</i>, so this diamond really asks "70 to 89?".`)
+                 : `Every test was False, so fall through to the last box (the <b>else</b>).`) });
+      if (c2) { finish('pb', 'e-d2-pb', T[1].g, `Grade: ${T[1].g}`); return steps; }
+      finish('pf', 'e-d2-pf', 'F', 'Go to office hours!');
+      return steps;
+    },
+    onLoad(p) {
+      swapped = p.swapped;
+      $('d1-text').textContent = `score ≥ ${swapped ? 70 : 90}?`;
+      $('d2-text').textContent = `score ≥ ${swapped ? 90 : 70}?`;
+      $('pa-text').textContent = `Print '${swapped ? 'B' : 'A'}'`;
+      $('pb-text').textContent = `Print '${swapped ? 'A' : 'B'}'`;
+      $('bands').innerHTML = BANDS[swapped ? 'swapped' : 'normal'].map(b =>
+        `<div class="band" data-g="${b.g}" style="width:${b.w}%">${b.label}</div>`).join('');
+      $('marker').style.left = p.score + '%';
+      $('markerVal').textContent = p.score;
+    },
+    renderExtra(s) {
+      document.querySelectorAll('#bands .band').forEach(b => b.classList.toggle('on', b.dataset.g === s.result));
+    }
+  });
+
+  function load(v) {
+    let n = parseInt(v ?? $('score').value, 10);
+    if (isNaN(n)) n = 75;
+    n = Math.max(0, Math.min(100, n));
+    $('score').value = n; $('slider').value = n;
+    demo.load({ score: n, swapped: $('swap').checked });
+  }
+  $('slider').oninput = e => load(e.target.value);
+  $('score').addEventListener('change', e => load(e.target.value));
+  $('score').addEventListener('keydown', e => { if (e.key === 'Enter') { load(e.target.value); e.target.blur(); } e.stopPropagation(); });
+  $('swap').onchange = () => load();
+  document.querySelectorAll('.preset').forEach(b => b.onclick = () => load(b.textContent));
+  load(75);
+})();
+</script>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

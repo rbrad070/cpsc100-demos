@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables, Data Types, and Basic I/O · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../../">CPSC 100</a>
+  <span class="crumb">Lecture notes</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<header class="title">
+<div class="week">Week 2</div>
+<h1>Variables, Data Types, and Basic I/O</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#memory" id="toc-memory">Memory</a></li>
+<li><a href="#data-types" id="toc-data-types">Data Types</a></li>
+<li><a href="#variables" id="toc-variables">Variables</a></li>
+<li><a href="#output-with-printf" id="toc-output-with-printf">Output
+with <code>printf</code></a></li>
+<li><a href="#strings-a-first-look"
+id="toc-strings-a-first-look">Strings: A First Look</a></li>
+<li><a href="#input-with-scanf" id="toc-input-with-scanf">Input with
+<code>scanf</code></a></li>
+<li><a href="#flow-diagrams" id="toc-flow-diagrams">Flow
+Diagrams</a></li>
+</ul>
+</nav>
+<section id="memory" class="level2">
+<h2>Memory</h2>
+<section id="memory-is-physical-hardware" class="level3">
+<h3>Memory is Physical Hardware</h3>
+<p>Before we look at variables and data types, it helps to understand
+<em>where</em> data actually lives.</p>
+<p><span class="alert">Memory is a real, physical piece of
+hardware</span> inside the computer; not just an abstract idea.</p>
+<div class="center">
+<p><img src="hardware-diagram.png" alt="A computer contains a CPU (the brains), RAM (temporary storage) and a disk or flash drive (persistent storage)" style="width:50.0%"
+loading="lazy" /></p>
+</div>
+</section>
+<section id="ram-vs.-persistent-storage" class="level3">
+<h3>RAM vs. Persistent Storage</h3>
+<p>There are <span class="alert">two</span> different kinds of storage
+hardware:</p>
+<ul>
+<li><p><span class="alert">RAM</span> (Random Access Memory);
+<em>temporary</em> storage</p>
+<ul>
+<li><p>holds a program’s variables <em>while it is running</em></p></li>
+<li><p>very fast to read and write</p></li>
+<li><p>erased when the program ends or the computer loses power</p></li>
+</ul></li>
+</ul>
+<div class="center">
+<p><img src="ram_ddr4.jpg" alt="Photo of a RAM module: a long green circuit board with memory chips" style="width:50.0%" loading="lazy" /></p>
+<div class="credit">
+<p>Photo: <a
+href="https://commons.wikimedia.org/wiki/File:16_GiB-DDR4-RAM-Riegel_RAM019FIX_Small_Crop_90_PCNT.png">PantheraLeo1359531</a>,
+<a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>, via
+Wikimedia Commons</p>
+</div>
+</div>
+<p>Every variable you declare this term lives in <span
+class="alert">RAM</span>.</p>
+<ul>
+<li><p><span class="alert">Disk or Flash</span>; <em>persistent</em>
+storage</p>
+<ul>
+<li><p>holds your source files, compiled programs, and saved
+data</p></li>
+<li><p>much slower than RAM</p></li>
+<li><p>survives after the program ends and the computer is turned
+off</p></li>
+</ul></li>
+</ul>
+<div class="center">
+<p><img src="harddrive_open.jpg" alt="Photo of an opened hard drive showing its shiny disk platter and read arm" style="width:30.0%"
+loading="lazy" /></p>
+<div class="credit">
+<p>Photo: <a
+href="https://commons.wikimedia.org/wiki/File:Open_hard-drive.jpg">Zzubnik</a>,
+public domain, via Wikimedia Commons</p>
+</div>
+</div>
+</section>
+<section id="from-hardware-to-a-mental-model" class="level3">
+<h3>From Hardware to a Mental Model</h3>
+<p>RAM is a real chip with billions of physical storage cells; but
+working at that level is far too low-level for everyday programming.</p>
+<p>Instead we use a simpler <span class="alert">mental model</span>:</p>
+<div class="center">
+<p><img src="fig01.svg" alt="A row of eight memory boxes, labelled Addr 0 to Addr 7" class="diagram" loading="lazy"
+width="386" /></p>
+</div>
+<ul>
+<li><p>Picture RAM as one very long row of small storage <span
+class="alert">boxes</span></p></li>
+<li><p>Each box has a numeric <span class="alert">address</span>; for
+now we let the compiler manage addresses for us, but we will work with
+them directly later when we cover pointers</p></li>
+<li><p>Instead, we give a box a <span class="alert">name</span> we
+choose; that is a <span class="alert">variable</span></p></li>
+</ul>
+<p>A <span class="alert">variable</span> is a named box in memory that
+holds a value.</p>
+</section>
+</section>
+<section id="data-types" class="level2">
+<h2>Data Types</h2>
+<section id="why-a-box-needs-a-type" class="level3">
+<h3>Why a Box Needs a <em>Type</em></h3>
+<p>Knowing <em>where</em> a box is isn’t enough; the computer also needs
+to know <em>how to interpret the bits inside it</em>.</p>
+<ul>
+<li><p>Inside memory, everything is just patterns of <code
+class="sourceCode c"><span class="dv">0</span></code>s and <code
+class="sourceCode c"><span class="dv">1</span></code>s</p></li>
+<li><p>The exact same bit pattern means something completely different
+depending on how it is read</p></li>
+</ul>
+<div class="center">
+<p><img src="fig02.svg" alt="The same bits in memory, 01000001, read as an int give 65 and read as a char give &#x27;A&#x27;" class="diagram" loading="lazy"
+width="421" /></p>
+</div>
+<p>This is why every variable in C must have a <span class="alert">data
+type</span>; the type tells the compiler how many bits to use and how to
+interpret them.</p>
+</section>
+<section id="kinds-of-data" class="level3">
+<h3>Kinds of Data</h3>
+<p>C programs work with data made up of numbers and characters.</p>
+<p>There are many data types in C, but these are the fundamental
+ones:</p>
+<ul>
+<li><p>Characters (<code
+class="sourceCode c"><span class="dt">char</span></code> )</p></li>
+<li><p>Integers (<code
+class="sourceCode c"><span class="dt">int</span></code> , <code
+class="sourceCode c"><span class="dt">short</span></code> )</p></li>
+<li><p>Floating-point numbers (<code
+class="sourceCode c"><span class="dt">float</span></code> , <code
+class="sourceCode c"><span class="dt">double</span></code> )</p></li>
+<li><p>A modifier that changes how integers are interpreted (<code
+class="sourceCode c"><span class="dt">unsigned</span></code> )</p></li>
+</ul>
+</section>
+<section id="characters" class="level3">
+<h3>Characters</h3>
+<p>A C <span class="alert">character</span> is any single character your
+computer can represent.</p>
+<p>There are 256 characters on the <a
+href="https://www.ee.ucl.ac.uk/mflanaga/java/HTMLandASCIItableC1.html">ASCII
+table</a>. For example, these are all characters:</p>
+<div class="multicol">
+<ul>
+<li><p>A</p></li>
+<li><p>a</p></li>
+<li><p>4</p></li>
+<li><p>%</p></li>
+<li><p>Q</p></li>
+<li><p>!</p></li>
+<li><p>+</p></li>
+<li><p>=</p></li>
+<li><p>]</p></li>
+</ul>
+</div>
+<p><code class="sourceCode c"><span class="dt">char</span></code> values
+must be enclosed in <span class="alert">single quotes</span> (e.g.,
+<code
+class="sourceCode c"><span class="ch">&#39;A&#39;</span></code>).</p>
+</section>
+<section id="the-ascii-table" class="level3">
+<h3>The ASCII Table</h3>
+<p>Every character is stored as a number. These are the printable ones,
+32 to 126. You can find the full ASCII table, with all 256 characters,
+on <span class="alert">Moodle</span>.</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+<th style="text-align: right;"><strong>Dec</strong></th>
+<th style="text-align: center;"><strong>Char</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">32</td>
+<td style="text-align: center;"><em>space</em></td>
+<td style="text-align: right;">48</td>
+<td style="text-align: center;"><code>0</code></td>
+<td style="text-align: right;">64</td>
+<td style="text-align: center;"><code>@</code></td>
+<td style="text-align: right;">80</td>
+<td style="text-align: center;"><code>P</code></td>
+<td style="text-align: right;">96</td>
+<td style="text-align: center;"><code class="text">`</code></td>
+<td style="text-align: right;">112</td>
+<td style="text-align: center;"><code>p</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">33</td>
+<td style="text-align: center;"><code>!</code></td>
+<td style="text-align: right;">49</td>
+<td style="text-align: center;"><code>1</code></td>
+<td style="text-align: right;">65</td>
+<td style="text-align: center;"><code>A</code></td>
+<td style="text-align: right;">81</td>
+<td style="text-align: center;"><code>Q</code></td>
+<td style="text-align: right;">97</td>
+<td style="text-align: center;"><code>a</code></td>
+<td style="text-align: right;">113</td>
+<td style="text-align: center;"><code>q</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">34</td>
+<td style="text-align: center;"><code>"</code></td>
+<td style="text-align: right;">50</td>
+<td style="text-align: center;"><code>2</code></td>
+<td style="text-align: right;">66</td>
+<td style="text-align: center;"><code>B</code></td>
+<td style="text-align: right;">82</td>
+<td style="text-align: center;"><code>R</code></td>
+<td style="text-align: right;">98</td>
+<td style="text-align: center;"><code>b</code></td>
+<td style="text-align: right;">114</td>
+<td style="text-align: center;"><code>r</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">35</td>
+<td style="text-align: center;"><code>#</code></td>
+<td style="text-align: right;">51</td>
+<td style="text-align: center;"><code>3</code></td>
+<td style="text-align: right;">67</td>
+<td style="text-align: center;"><code>C</code></td>
+<td style="text-align: right;">83</td>
+<td style="text-align: center;"><code>S</code></td>
+<td style="text-align: right;">99</td>
+<td style="text-align: center;"><code>c</code></td>
+<td style="text-align: right;">115</td>
+<td style="text-align: center;"><code>s</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">36</td>
+<td style="text-align: center;"><code>$</code></td>
+<td style="text-align: right;">52</td>
+<td style="text-align: center;"><code>4</code></td>
+<td style="text-align: right;">68</td>
+<td style="text-align: center;"><code>D</code></td>
+<td style="text-align: right;">84</td>
+<td style="text-align: center;"><code>T</code></td>
+<td style="text-align: right;">100</td>
+<td style="text-align: center;"><code>d</code></td>
+<td style="text-align: right;">116</td>
+<td style="text-align: center;"><code>t</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">37</td>
+<td style="text-align: center;"><code>%</code></td>
+<td style="text-align: right;">53</td>
+<td style="text-align: center;"><code>5</code></td>
+<td style="text-align: right;">69</td>
+<td style="text-align: center;"><code>E</code></td>
+<td style="text-align: right;">85</td>
+<td style="text-align: center;"><code>U</code></td>
+<td style="text-align: right;">101</td>
+<td style="text-align: center;"><code>e</code></td>
+<td style="text-align: right;">117</td>
+<td style="text-align: center;"><code>u</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">38</td>
+<td style="text-align: center;"><code>&amp;</code></td>
+<td style="text-align: right;">54</td>
+<td style="text-align: center;"><code>6</code></td>
+<td style="text-align: right;">70</td>
+<td style="text-align: center;"><code>F</code></td>
+<td style="text-align: right;">86</td>
+<td style="text-align: center;"><code>V</code></td>
+<td style="text-align: right;">102</td>
+<td style="text-align: center;"><code>f</code></td>
+<td style="text-align: right;">118</td>
+<td style="text-align: center;"><code>v</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">39</td>
+<td style="text-align: center;"><code class="text">'</code></td>
+<td style="text-align: right;">55</td>
+<td style="text-align: center;"><code>7</code></td>
+<td style="text-align: right;">71</td>
+<td style="text-align: center;"><code>G</code></td>
+<td style="text-align: right;">87</td>
+<td style="text-align: center;"><code>W</code></td>
+<td style="text-align: right;">103</td>
+<td style="text-align: center;"><code>g</code></td>
+<td style="text-align: right;">119</td>
+<td style="text-align: center;"><code>w</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">40</td>
+<td style="text-align: center;"><code>(</code></td>
+<td style="text-align: right;">56</td>
+<td style="text-align: center;"><code>8</code></td>
+<td style="text-align: right;">72</td>
+<td style="text-align: center;"><code>H</code></td>
+<td style="text-align: right;">88</td>
+<td style="text-align: center;"><code>X</code></td>
+<td style="text-align: right;">104</td>
+<td style="text-align: center;"><code>h</code></td>
+<td style="text-align: right;">120</td>
+<td style="text-align: center;"><code>x</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">41</td>
+<td style="text-align: center;"><code>)</code></td>
+<td style="text-align: right;">57</td>
+<td style="text-align: center;"><code>9</code></td>
+<td style="text-align: right;">73</td>
+<td style="text-align: center;"><code>I</code></td>
+<td style="text-align: right;">89</td>
+<td style="text-align: center;"><code>Y</code></td>
+<td style="text-align: right;">105</td>
+<td style="text-align: center;"><code>i</code></td>
+<td style="text-align: right;">121</td>
+<td style="text-align: center;"><code>y</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">42</td>
+<td style="text-align: center;"><code>*</code></td>
+<td style="text-align: right;">58</td>
+<td style="text-align: center;"><code>:</code></td>
+<td style="text-align: right;">74</td>
+<td style="text-align: center;"><code>J</code></td>
+<td style="text-align: right;">90</td>
+<td style="text-align: center;"><code>Z</code></td>
+<td style="text-align: right;">106</td>
+<td style="text-align: center;"><code>j</code></td>
+<td style="text-align: right;">122</td>
+<td style="text-align: center;"><code>z</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">43</td>
+<td style="text-align: center;"><code>+</code></td>
+<td style="text-align: right;">59</td>
+<td style="text-align: center;"><code>;</code></td>
+<td style="text-align: right;">75</td>
+<td style="text-align: center;"><code>K</code></td>
+<td style="text-align: right;">91</td>
+<td style="text-align: center;"><code>[</code></td>
+<td style="text-align: right;">107</td>
+<td style="text-align: center;"><code>k</code></td>
+<td style="text-align: right;">123</td>
+<td style="text-align: center;"><code>{</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">44</td>
+<td style="text-align: center;"><code>,</code></td>
+<td style="text-align: right;">60</td>
+<td style="text-align: center;"><code>&lt;</code></td>
+<td style="text-align: right;">76</td>
+<td style="text-align: center;"><code>L</code></td>
+<td style="text-align: right;">92</td>
+<td style="text-align: center;"><code>\</code></td>
+<td style="text-align: right;">108</td>
+<td style="text-align: center;"><code>l</code></td>
+<td style="text-align: right;">124</td>
+<td style="text-align: center;"><code>|</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">45</td>
+<td style="text-align: center;"><code>-</code></td>
+<td style="text-align: right;">61</td>
+<td style="text-align: center;"><code>=</code></td>
+<td style="text-align: right;">77</td>
+<td style="text-align: center;"><code>M</code></td>
+<td style="text-align: right;">93</td>
+<td style="text-align: center;"><code>]</code></td>
+<td style="text-align: right;">109</td>
+<td style="text-align: center;"><code>m</code></td>
+<td style="text-align: right;">125</td>
+<td style="text-align: center;"><code>}</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">46</td>
+<td style="text-align: center;"><code>.</code></td>
+<td style="text-align: right;">62</td>
+<td style="text-align: center;"><code>&gt;</code></td>
+<td style="text-align: right;">78</td>
+<td style="text-align: center;"><code>N</code></td>
+<td style="text-align: right;">94</td>
+<td style="text-align: center;"><code>^</code></td>
+<td style="text-align: right;">110</td>
+<td style="text-align: center;"><code>n</code></td>
+<td style="text-align: right;">126</td>
+<td style="text-align: center;"><code>~</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">47</td>
+<td style="text-align: center;"><code>/</code></td>
+<td style="text-align: right;">63</td>
+<td style="text-align: center;"><code>?</code></td>
+<td style="text-align: right;">79</td>
+<td style="text-align: center;"><code>O</code></td>
+<td style="text-align: right;">95</td>
+<td style="text-align: center;"><code>_</code></td>
+<td style="text-align: right;">111</td>
+<td style="text-align: center;"><code>o</code></td>
+<td style="text-align: right;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="careful-4-vs.-4" class="level3">
+<h3>Careful: <code>4</code> vs. <code>'4'</code></h3>
+<p>Because a <code
+class="sourceCode c"><span class="dt">char</span></code> is stored as a
+number, <code class="sourceCode c"><span class="dv">4</span></code> and
+<code class="sourceCode c"><span class="ch">&#39;4&#39;</span></code>
+are not the same thing:</p>
+<ul>
+<li><p><code class="sourceCode c"><span class="dv">4</span></code> is
+the <strong>number</strong> four (an <code
+class="sourceCode c"><span class="dt">int</span></code> )</p></li>
+<li><p><code
+class="sourceCode c"><span class="ch">&#39;4&#39;</span></code> is the
+<strong>character</strong> four; C stores it as its ASCII code, <code
+class="sourceCode c"><span class="dv">52</span></code> (look it up in
+the table)</p></li>
+<li><p>So <code
+class="sourceCode c"><span class="ch">&#39;4&#39;</span> <span class="op">+</span> <span class="dv">1</span></code>
+is <code class="sourceCode c"><span class="dv">53</span></code> (the
+character <code
+class="sourceCode c"><span class="ch">&#39;5&#39;</span></code>), not
+<code class="sourceCode c"><span class="dv">5</span></code></p></li>
+</ul>
+</section>
+<section id="numbers" class="level3">
+<h3>Numbers</h3>
+<p>There are different ways to express numbers in a computer.</p>
+<p><em>integers</em> represent whole numbers (<code
+class="sourceCode c"><span class="dt">int</span></code> ):</p>
+<div class="multicol">
+<ul>
+<li><p>10</p></li>
+<li><p>54</p></li>
+<li><p>0</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>121</mn></mrow><annotation encoding="application/x-tex">-121</annotation></semantics></math></p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>68</mn></mrow><annotation encoding="application/x-tex">-68</annotation></semantics></math></p></li>
+<li><p>752</p></li>
+</ul>
+</div>
+<p><em>floating-point numbers</em> are numbers with decimal points
+(<code class="sourceCode c"><span class="dt">float</span></code> ):</p>
+<div class="multicol">
+<ul>
+<li><p>547.43</p></li>
+<li><p>0.0</p></li>
+<li><p>0.44384</p></li>
+<li><p>9.1923</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>168.47</mn></mrow><annotation encoding="application/x-tex">-168.47</annotation></semantics></math></p></li>
+<li><p>.22</p></li>
+</ul>
+</div>
+<p>The choice of integer or floating-point type depends on the data:</p>
+<ul>
+<li><p>type of data (whole number vs. decimal)</p></li>
+<li><p>size of numbers expected</p></li>
+<li><p>amount of memory you’re willing to spend</p></li>
+</ul>
+<div class="center">
+<p><img src="fig03.svg" alt="Memory column where 121.34 (a float) takes more cells than 1923 (an int), beside a balance scale tipped toward the heavier 121.34" class="diagram" loading="lazy"
+width="389" /></p>
+</div>
+<p>Storing floats often takes more memory than storing integers.</p>
+</section>
+<section id="more-fundamental-types" class="level3">
+<h3>More Fundamental Types</h3>
+<p>Beyond <code class="sourceCode c"><span class="dt">char</span></code>
+, <code class="sourceCode c"><span class="dt">int</span></code> , and
+<code class="sourceCode c"><span class="dt">float</span></code> , C
+gives you a few more choices:</p>
+<ul>
+<li><p><code class="sourceCode c"><span class="dt">short</span></code> ;
+a smaller integer, for when values stay small</p></li>
+<li><p><code class="sourceCode c"><span class="dt">double</span></code>
+; <em>double-precision</em> floating-point; larger range and more
+decimal precision than <code
+class="sourceCode c"><span class="dt">float</span></code></p></li>
+<li><p><code
+class="sourceCode c"><span class="dt">unsigned</span></code> ; a
+modifier that tells the compiler “this integer can never be negative,”
+which doubles the largest positive value it can hold</p></li>
+</ul>
+<ul>
+<li><p><code
+class="sourceCode c"><span class="dt">unsigned</span> <span class="dt">int</span></code>,
+<code
+class="sourceCode c"><span class="dt">unsigned</span> <span class="dt">short</span></code>;
+common combinations</p></li>
+<li><p>Plain <code
+class="sourceCode c"><span class="dt">int</span></code> and <code
+class="sourceCode c"><span class="dt">short</span></code> are <span
+class="alert">signed</span> by default</p></li>
+</ul>
+</section>
+<section id="data-types-sizes" class="level3">
+<h3>Data Types: Sizes</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: right;">Bits</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">char</span></code></td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Holds character data such as <code
+class="sourceCode c"><span class="ch">&#39;X&#39;</span></code> and
+<code
+class="sourceCode c"><span class="ch">&#39;!&#39;</span></code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">short</span></code></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≥</mo><annotation encoding="application/x-tex">\geq</annotation></semantics></math>16</td>
+<td style="text-align: left;">Smaller integer; useful range, less
+memory</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">int</span></code></td>
+<td style="text-align: right;">32</td>
+<td style="text-align: left;">Whole numbers from -2,147,483,648 to
+2,147,483,647</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">unsigned</span></code> <code
+class="sourceCode c"><span class="dt">int</span></code></td>
+<td style="text-align: right;">32</td>
+<td style="text-align: left;">Non-negative only: 0 to 4,294,967,295</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">float</span></code></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>∼</mo><annotation encoding="application/x-tex">\sim</annotation></semantics></math>32</td>
+<td style="text-align: left;">Decimal values such as 25.6 and
+-145.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">double</span></code></td>
+<td
+style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>∼</mo><annotation encoding="application/x-tex">\sim</annotation></semantics></math>64</td>
+<td style="text-align: left;">More precision and range than <code
+class="sourceCode c"><span class="dt">float</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span class="alert">Exact sizes are not guaranteed by the C
+standard</span>; they depend on the compiler and machine.</p>
+</section>
+<section id="the-sizeof-operator" class="level3">
+<h3>The <code>sizeof</code> Operator</h3>
+<p><code class="sourceCode c"><span class="kw">sizeof</span></code>
+answers: <em>how many bytes does this type take up on <span
+class="alert">my</span> machine?</em></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%lu\n</span><span class="st">&quot;</span><span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">int</span><span class="op">));</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%lu\n</span><span class="st">&quot;</span><span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span></span></code></pre></div>
+<ul>
+<li><p><code class="sourceCode c"><span class="kw">sizeof</span></code>
+accepts a <span class="alert">type name</span> or a <span
+class="alert">variable name</span></p></li>
+<li><p>Returns a result in <span class="alert">bytes</span></p></li>
+<li><p>Use <code>%lu</code> to print it; <code>%lu</code> (<em>long
+unsigned</em>) is a <span class="alert">conversion character</span>, a
+placeholder that tells <code class="sourceCode c">printf</code> what
+type to expect; we will cover these in detail shortly</p></li>
+</ul>
+<p>Don’t memorize “<code
+class="sourceCode c"><span class="dt">int</span></code> is always 4
+bytes”; ask the compiler with <code
+class="sourceCode c"><span class="kw">sizeof</span></code>. The C
+standard only guarantees <code
+class="sourceCode c"><span class="dt">short</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>
+<code class="sourceCode c"><span class="dt">int</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>
+<code class="sourceCode c"><span class="dt">long</span></code> in
+size.</p>
+</section>
+</section>
+<section id="variables" class="level2">
+<h2>Variables</h2>
+<section id="variables-reserving-a-named-box" class="level3">
+<h3>Variables: Reserving a Named Box</h3>
+<p>In C, every variable must be <span class="alert">declared</span>
+before it is used.</p>
+<p>A declaration does three things:</p>
+<ul>
+<li><p>gives a memory location a <span
+class="alert">name</span></p></li>
+<li><p>reserves the right number of <span class="alert">bytes</span> for
+the type</p></li>
+<li><p>tells the compiler how to <span class="alert">treat</span> the
+data stored there</p></li>
+</ul>
+<p><code
+class="sourceCode c"><span class="dt">int</span> score <span class="op">=</span> <span class="dv">42</span></code></p>
+<div class="center">
+<p><img src="fig04.svg" alt="A row of memory boxes at addresses 100 to 105; the box at address 102 is named score and holds 42" class="diagram" loading="lazy"
+width="323" /></p>
+</div>
+</section>
+<section id="naming-variables" class="level3">
+<h3>Naming Variables</h3>
+<p>Variable names must follow these rules:</p>
+<ul>
+<li><p>must start with a letter</p></li>
+<li><p>can contain letters, digits, and underscores
+<code>_</code></p></li>
+<li><p>no special characters (*, ^, etc.) except underscores</p></li>
+<li><p>case sensitive: <code class="sourceCode c">count</code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≠</mo><annotation encoding="application/x-tex">\neq</annotation></semantics></math>
+<code class="sourceCode c">Count</code></p></li>
+<li><p>cannot be a C reserved word:</p></li>
+</ul>
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">auto</td>
+<td style="text-align: left;">break</td>
+<td style="text-align: left;">case</td>
+<td style="text-align: left;">char</td>
+<td style="text-align: left;">const</td>
+<td style="text-align: left;">continue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">default</td>
+<td style="text-align: left;">do</td>
+<td style="text-align: left;">double</td>
+<td style="text-align: left;">else</td>
+<td style="text-align: left;">enum</td>
+<td style="text-align: left;">extern</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">float</td>
+<td style="text-align: left;">for</td>
+<td style="text-align: left;">goto</td>
+<td style="text-align: left;">if</td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">long</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">register</td>
+<td style="text-align: left;">return</td>
+<td style="text-align: left;">short</td>
+<td style="text-align: left;">signed</td>
+<td style="text-align: left;">sizeof</td>
+<td style="text-align: left;">static</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">struct</td>
+<td style="text-align: left;">switch</td>
+<td style="text-align: left;">typedef</td>
+<td style="text-align: left;">union</td>
+<td style="text-align: left;">unsigned</td>
+<td style="text-align: left;">void</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">volatile</td>
+<td style="text-align: left;">while</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="declaring-and-initializing-variables" class="level3">
+<h3>Declaring and Initializing Variables</h3>
+<p>General form:
+<em><code>type variableName</code></em><code> = </code><em><code>value</code></em><code>;</code></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span>  answer      <span class="op">=</span> <span class="ch">&#39;B&#39;</span><span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">short</span> smallCount  <span class="op">=</span> <span class="dv">100</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>   quantity    <span class="op">=</span> <span class="dv">14</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> price       <span class="op">=</span> <span class="fl">7.95</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> pi         <span class="op">=</span> <span class="fl">3.14159265</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">int</span> score <span class="op">=</span> <span class="dv">98</span><span class="op">;</span></span></code></pre></div>
+<ul>
+<li><p>Declaring and initializing <span class="alert">in one line</span>
+is the preferred style; it avoids ever reading an uninitialized
+box</p></li>
+<li><p>You can also declare first and assign later, but don’t read the
+variable until you have put a value in it; if you do, you get whatever
+random bits happened to be sitting in that memory box, called <span
+class="alert">garbage values</span>: the program compiles and runs, but
+the output is unpredictable</p></li>
+</ul>
+</section>
+</section>
+<section id="output-with-printf" class="level2">
+<h2>Output with <code>printf</code></h2>
+<section id="printing-variables-conversion-characters" class="level3">
+<h3>Printing Variables: Conversion Characters</h3>
+<p><code class="sourceCode c">printf</code> uses <span
+class="alert">conversion characters</span> as placeholders; each one
+matches a specific data type:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Conversion char</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Example value printed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>%d</code></td>
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">int</span></code> , <code
+class="sourceCode c"><span class="dt">short</span></code></td>
+<td style="text-align: left;"><code>42</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>%f</code></td>
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">float</span></code> , <code
+class="sourceCode c"><span class="dt">double</span></code></td>
+<td style="text-align: left;"><code>3.141593</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><code>%c</code></td>
+<td style="text-align: left;"><code
+class="sourceCode c"><span class="dt">char</span></code></td>
+<td style="text-align: left;"><code>A</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>%s</code></td>
+<td style="text-align: left;">string (<code
+class="sourceCode c"><span class="dt">char</span></code> array)</td>
+<td style="text-align: left;"><code>hello</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><code>%lu</code></td>
+<td style="text-align: left;"><code class="text">size_t</code> (from
+<code class="sourceCode c"><span class="kw">sizeof</span></code>)</td>
+<td style="text-align: left;"><code>4</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The conversion character must <span class="alert">match the
+type</span> of the variable you pass; mixing them gives undefined
+behavior.</p>
+</section>
+<section id="conversion-characters-example" class="level3">
+<h3>Conversion Characters: Example</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span>  grade    <span class="op">=</span> <span class="ch">&#39;A&#39;</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>   score    <span class="op">=</span> <span class="dv">95</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> average  <span class="op">=</span> <span class="fl">91.333333</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Grade: </span><span class="sc">%c\n</span><span class="st">&quot;</span><span class="op">,</span>   grade<span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Score: </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span>   score<span class="op">);</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Average: </span><span class="sc">%f\n</span><span class="st">&quot;</span><span class="op">,</span> average<span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Output:</p>
+<pre class="text"><code>Grade: A
+Score: 95
+Average: 91.333336</code></pre>
+</section>
+<section id="controlling-decimal-precision" class="level3">
+<h3>Controlling Decimal Precision</h3>
+<p>By default <code>%f</code> prints six decimal places. You can control
+this with <code>%.Nf</code> where <code>N</code> is the number of
+places:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> average <span class="op">=</span> <span class="fl">91.333333</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%f\n</span><span class="st">&quot;</span><span class="op">,</span>   average<span class="op">);</span>   <span class="co">// default: 6 places</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%.2f\n</span><span class="st">&quot;</span><span class="op">,</span> average<span class="op">);</span>   <span class="co">// 2 decimal places</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%.0f\n</span><span class="st">&quot;</span><span class="op">,</span> average<span class="op">);</span>   <span class="co">// rounded to whole number</span></span></code></pre></div>
+<p>Output:</p>
+<pre class="text"><code>91.333336
+91.33
+91</code></pre>
+<p><span class="alert">%.2f</span> is the standard choice for currency
+and most user-facing output in this course.</p>
+</section>
+</section>
+<section id="strings-a-first-look" class="level2">
+<h2>Strings: A First Look</h2>
+<section id="strings-text-in-c" class="level3">
+<h3>Strings: Text in C</h3>
+<p>So far we’ve printed <span class="alert">string literals</span>; text
+in double quotes hardcoded directly in <code
+class="sourceCode c">printf</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Hello, world!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span></code></pre></div>
+<p>But what if we want a <span class="alert">variable</span> that holds
+text?</p>
+<p>In C, a string is stored as a fixed-size array of <code
+class="sourceCode c"><span class="dt">char</span></code> values:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">];</span></span></code></pre></div>
+<ul>
+<li><p><code class="sourceCode c">name</code> is an array that can hold
+up to <span class="alert">50 characters</span> of text</p></li>
+<li><p>The <code class="sourceCode c"><span class="dv">50</span></code>
+must be large enough for the longest text you expect</p></li>
+<li><p>Use <code>%s</code> as the conversion character to print
+it</p></li>
+</ul>
+</section>
+<section id="strings-initializing-and-printing" class="level3">
+<h3>Strings: Initializing and Printing</h3>
+<p>You can initialize a <code
+class="sourceCode c"><span class="dt">char</span></code> array with a
+string literal:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">]</span> <span class="op">=</span> <span class="st">&quot;Alice&quot;</span><span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Hello, </span><span class="sc">%s</span><span class="st">!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span></span></code></pre></div>
+<p>Output:</p>
+<pre class="text"><code>Hello, Alice!</code></pre>
+<ul>
+<li><p><code>%s</code> works like <code>%d</code> or <code>%f</code>; it
+is a placeholder for the string variable</p></li>
+<li><p>The internal mechanics of how C stores strings will be covered in
+a later lecture; for now, just use the pattern above</p></li>
+</ul>
+</section>
+<section id="watch-out-single-quotes-vs.-double-quotes" class="level3">
+<h3>Watch Out: Single Quotes vs. Double Quotes</h3>
+<p><code class="sourceCode c"><span class="dt">char</span></code> values
+and strings look similar but are <span class="alert">not
+interchangeable</span>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> grade  <span class="op">=</span> <span class="ch">&#39;A&#39;</span><span class="op">;</span>    <span class="co">// single quotes -&gt; a char</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">]</span> <span class="op">=</span> <span class="st">&quot;A&quot;</span><span class="op">;</span>  <span class="co">// double quotes -&gt; a string</span></span></code></pre></div>
+<ul>
+<li><p><code>'A'</code> is a <span class="alert">single <code
+class="sourceCode c"><span class="dt">char</span></code> </span>
+value</p></li>
+<li><p><code>"A"</code> is a <span class="alert">string</span>; an array
+holding <code
+class="sourceCode c"><span class="ch">&#39;A&#39;</span></code>
+<em>and</em> a hidden terminating character</p></li>
+<li><p>Mixing them up (e.g. <code
+class="sourceCode c"><span class="dt">char</span> grade <span class="op">=</span> <span class="st">&quot;A&quot;</span><span class="op">;</span></code>)
+will not compile cleanly, and using the wrong conversion character
+(<code>%c</code> vs. <code>%s</code>) prints garbage or crashes your
+program</p></li>
+</ul>
+</section>
+</section>
+<section id="input-with-scanf" class="level2">
+<h2>Input with <code>scanf</code></h2>
+<section id="scanf-reading-from-the-keyboard" class="level3">
+<h3><code>scanf</code>: Reading from the Keyboard</h3>
+<p><code class="sourceCode c">printf</code> sends output <em>to</em> the
+screen. <code class="sourceCode c">scanf</code> reads input
+<em>from</em> the keyboard.</p>
+<p>General form:</p>
+<pre class="text"><code>scanf(conversionCharacter, &amp;myVariable);</code></pre>
+<ul>
+<li><p>The format string uses the <span class="alert">same conversion
+characters</span> as <code class="sourceCode c">printf</code>:
+<code>%d</code>, <code>%f</code>, <code>%c</code></p></li>
+<li><p>For numeric and character variables, you must write <span
+class="alert">&amp;</span> in front of the variable name</p></li>
+<li><p><code>&amp;</code> gives <code class="sourceCode c">scanf</code>
+the <em>address</em> of the variable so it can store the value directly
+into that memory box</p></li>
+<li><p>Think of it as the rule: “<code class="sourceCode c">scanf</code>
+needs the address, not the value”; the deeper reason (pointers) comes in
+a later week</p></li>
+</ul>
+</section>
+<section id="reading-different-types" class="level3">
+<h3>Reading Different Types</h3>
+<p>The conversion character and <code>&amp;</code> rule apply to each
+type:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span>    age<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span>  gpa<span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span>   grade<span class="op">;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>age<span class="op">);</span>    <span class="co">// read an integer</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%f</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>gpa<span class="op">);</span>    <span class="co">// read a float</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%c</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>grade<span class="op">);</span>  <span class="co">// read a single character</span></span></code></pre></div>
+<p>For a <span class="alert">string</span>, the rule is different; no
+<code>&amp;</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">];</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%s</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span>    <span class="co">// no &amp; for a char array</span></span></code></pre></div>
+<p>The array name <code class="sourceCode c">name</code> is already an
+address; that’s why <code>&amp;</code> is not needed here. Again, the
+details come in a later week; for now, just learn the rule.</p>
+</section>
+<section id="a-complete-inputoutput-example" class="level3">
+<h3>A Complete Input/Output Example</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> name<span class="op">[</span><span class="dv">50</span><span class="op">];</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> gpa<span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Enter your name: &quot;</span><span class="op">);</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%s</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">);</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Enter your GPA: &quot;</span><span class="op">);</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%f</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>gpa<span class="op">);</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;Name: </span><span class="sc">%s</span><span class="st">  GPA: </span><span class="sc">%.2f\n</span><span class="st">&quot;</span><span class="op">,</span> name<span class="op">,</span> gpa<span class="op">);</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Notice: <code>%s</code>/<code class="sourceCode c">name</code> has no
+<code>&amp;</code>; <code>%f</code>/<code
+class="sourceCode c">gpa</code> does.</p>
+</section>
+</section>
+<section id="flow-diagrams" class="level2">
+<h2>Flow Diagrams</h2>
+<section id="flow-diagrams-declaring-assigning-are-process-steps"
+class="level3">
+<h3>Flow Diagrams: Declaring &amp; Assigning are Process Steps</h3>
+<p>Recall the shapes from last week:</p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p><strong>Oval</strong>; Start or Stop</p></li>
+<li><p><strong>Rectangle</strong>; a process or computation
+step</p></li>
+<li><p><strong>Parallelogram</strong>; input or output (<code
+class="sourceCode c">printf</code>, <code
+class="sourceCode c">scanf</code>)</p></li>
+</ul>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig05.svg" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
+width="173" /></p>
+</div>
+</div>
+</div>
+<p>Declaring a variable and assigning it a value are both <span
+class="alert">process steps</span>; they get their own rectangle.</p>
+<p>No new shape this week; we’re reinforcing the rectangle in a new
+role.</p>
+</section>
+<section id="unit-conversion-plan-before-you-code" class="level3">
+<h3>Unit Conversion: Plan Before You Code</h3>
+<div class="columns">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare variables: float inches, cm; Input: Prompt and read inches via scanf; Process: cm = inches * 2.54; Output: Print cm via printf; Stop" class="diagram" loading="lazy"
+width="309" /></p>
+</div>
+</div><div class="column">
+<p>Notice the pattern:</p>
+<ul>
+<li><p><strong>Declare</strong>; a process rectangle</p></li>
+<li><p><strong>Input</strong>; a parallelogram (<code
+class="sourceCode c">scanf</code>)</p></li>
+<li><p><strong>Process</strong>; compute; another rectangle</p></li>
+<li><p><strong>Output</strong>; a parallelogram (<code
+class="sourceCode c">printf</code>)</p></li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<nav class="pager">
+<a class="prev" href="../lecture01/"><span class="label">← Previous</span>Week
+1: What is a Program?</a>
+<a class="next" href="../lecture03/"><span class="label">Next →</span>Week
+3: Operators, Expressions, and the Standard Library</a>
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

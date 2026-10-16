@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loops · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../../">CPSC 100</a>
+  <span class="crumb">Lecture notes</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<header class="title">
+<div class="week">Week 5</div>
+<h1>Loops</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#repetition" id="toc-repetition">Repetition</a></li>
+<li><a href="#while-loops" id="toc-while-loops"><code>while</code>
+Loops</a></li>
+<li><a href="#do..while-loops"
+id="toc-do..while-loops"><code>do..while</code> Loops</a></li>
+<li><a href="#the-for-loop" id="toc-the-for-loop">The <code>for</code>
+Loop</a></li>
+<li><a href="#choosing-a-loop" id="toc-choosing-a-loop">Choosing a
+Loop</a></li>
+<li><a href="#loop-control-patterns" id="toc-loop-control-patterns">Loop
+Control Patterns</a></li>
+<li><a href="#nested-loops" id="toc-nested-loops">Nested Loops</a></li>
+<li><a href="#common-bugs" id="toc-common-bugs">Common Bugs</a></li>
+<li><a href="#break-and-continue"
+id="toc-break-and-continue"><code>break</code> and
+<code>continue</code></a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul>
+</nav>
+<section id="repetition" class="level2">
+<h2>Repetition</h2>
+<section id="doing-the-same-thing-many-times" class="level3">
+<h3>Doing the Same Thing, Many Times</h3>
+<p>Every program we’ve written so far runs each statement
+<strong>once</strong>, top to bottom.</p>
+<p>Many real tasks require doing the <strong>same</strong> thing many
+times: print every number from 1 to 100, ask the user for input until
+they give a valid answer, process every student in a class.</p>
+<p><strong>Repetition</strong> is the core idea: write the logic
+<em>once</em>, let the computer repeat it as many times as needed.</p>
+</section>
+<section id="the-loop-back-arrow-a-new-notation" class="level3">
+<h3>The Loop-Back Arrow: A New Notation</h3>
+<p>Recall our shapes: <span class="alert">oval</span> (Start/Stop),
+<span class="alert">rectangle</span> (process), <span
+class="alert">parallelogram</span> (I/O), <span
+class="alert">diamond</span> (decision).</p>
+<p>Loops introduce exactly <strong>one</strong> new piece of
+notation:</p>
+<ul>
+<li><p>An arrow leads from the <strong>bottom</strong> of the loop body
+back up to the decision diamond</p></li>
+<li><p>This <span class="alert">loop-back arrow</span> closes a cycle:
+as long as the condition holds, control keeps returning to the
+diamond</p></li>
+<li><p>The loop body itself is drawn as a <strong>dashed box</strong>,
+since it groups several statements together</p></li>
+</ul>
+<p>This week, the dashed box means exactly one thing: <strong>loop
+body</strong>.</p>
+</section>
+<section id="tracing-a-loop-by-hand" class="level3">
+<h3>Tracing a Loop by Hand</h3>
+<p>Before you trust any loop, <strong>trace it</strong>: step through
+each iteration on paper, writing down how every variable changes.</p>
+<p>For each pass through the loop, ask:</p>
+<ul>
+<li><p>What is the condition being tested, and is it true or false
+<em>right now</em>?</p></li>
+<li><p>What does the body do this time through?</p></li>
+<li><p>What changes before the next test?</p></li>
+</ul>
+<p>This habit catches off-by-one errors and infinite loops
+<strong>before</strong> you run the program.</p>
+</section>
+</section>
+<section id="while-loops" class="level2">
+<h2><code>while</code> Loops</h2>
+<section id="the-while-statement" class="level3">
+<h3>The <code>while</code> Statement</h3>
+<p><code class="sourceCode c"><span class="cf">while</span></code>
+repeatedly executes a block of statements <strong>as long as</strong> a
+condition is true.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>condition<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Execution order:</p>
+<ul>
+<li><p><code class="sourceCode c">condition</code> is evaluated
+<strong>first</strong></p></li>
+<li><p>if <strong>false</strong>: the body never runs</p></li>
+<li><p>if <strong>true</strong>: the body runs, then <code
+class="sourceCode c">condition</code> is re-evaluated</p></li>
+</ul>
+</section>
+<section id="the-while-loop-flow-diagram-template" class="level3">
+<h3>The <code>while</code> Loop: Flow Diagram Template</h3>
+<div class="columns">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig01.svg" alt="Flow diagram with boxes: Start; Test Condition; Loop body: statement 1 …; End" class="diagram" loading="lazy"
+width="356" /></p>
+</div>
+</div><div class="column">
+<p><span class="alert">Notice: the diamond comes <strong>before</strong>
+the dashed loop body.</span> The condition is tested first; the body may
+run <strong>zero</strong> times.</p>
+</div>
+</div>
+</section>
+<section id="worked-example-print-numbers-up-to-9-while" class="level3">
+<h3>Worked Example: Print Numbers Up To 9 (<code>while</code>)</h3>
+<div class="columns">
+<div class="column">
+<p>Prompt the user for an integer <code class="sourceCode c">num</code>.
+Using a <code class="sourceCode c"><span class="cf">while</span></code>
+loop, print all integers from <code class="sourceCode c">num</code> up
+to 9, one per line.</p>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig02.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num &lt; 10?; print num; Loop update: num++; End" class="diagram" loading="lazy"
+width="349" /></p>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a>    printf<span class="op">(</span><span class="st">&quot;Enter an integer: &quot;</span><span class="op">);</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a>    <span class="cf">while</span> <span class="op">(</span>num <span class="op">&lt;</span> <span class="dv">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>        printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>        num<span class="op">++;</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="op">}</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="try-it-while-loop-walkthrough" class="level3">
+<h3>Try It: While Loop Walkthrough</h3>
+<div class="tryit">
+<p>Step through the diagram and watch <code
+class="sourceCode c">num</code> move along a number line until the test
+turns False:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/while-loop/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/while-loop/</code></a></span></p>
+</div>
+<ul>
+<li><p>Try <code class="sourceCode c"><span class="dv">7</span></code>,
+then <code class="sourceCode c"><span class="dv">12</span></code>: when
+the first test is False, the loop body runs <span
+class="alert">zero</span> times</p></li>
+</ul>
+</div>
+</section>
+<section id="watch-out-loops-without-an-exit" class="level3">
+<h3>Watch Out: Loops Without an Exit</h3>
+<p>Every <code class="sourceCode c"><span class="cf">while</span></code>
+loop needs something inside the body that eventually makes the condition
+false.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> counter <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;counter is </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> counter<span class="op">++);</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This condition is always true (<code
+class="sourceCode c"><span class="dv">1</span></code> is non-zero)
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+the loop <span class="alert">never stops</span> on its own.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+<code>ctrl-c</code> is the only way out.</p>
+</section>
+</section>
+<section id="do..while-loops" class="level2">
+<h2><code>do..while</code> Loops</h2>
+<section id="the-do..while-statement" class="level3">
+<h3>The <code>do..while</code> Statement</h3>
+<p>Similar to <code
+class="sourceCode c"><span class="cf">while</span></code>, but the
+condition is checked <strong>after</strong> the body runs:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">while</span> <span class="op">(</span>condition<span class="op">);</span></span></code></pre></div>
+<p><span class="alert">The body always executes at least once</span>.
+This makes <code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code>
+the natural choice for <strong>input validation</strong>: you must read
+a value before you can check whether it’s valid.</p>
+</section>
+<section id="the-do..while-loop-flow-diagram-template" class="level3">
+<h3>The <code>do..while</code> Loop: Flow Diagram Template</h3>
+<div class="columns">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Loop body: statement 1 …; Test Condition; End" class="diagram" loading="lazy"
+width="285" /></p>
+</div>
+</div><div class="column">
+<p><span class="alert">Notice: the dashed loop body comes
+<strong>before</strong> the diamond here.</span> The body always runs
+<strong>at least once</strong>, even if the condition is initially
+false.</p>
+</div>
+</div>
+</section>
+<section id="worked-example-picking-a-number-do..while" class="level3">
+<h3>Worked Example: Picking a Number (<code>do..while</code>)</h3>
+<div class="columns">
+<div class="column">
+<p>Consider the follow program:</p>
+<blockquote>
+<p>Prompt a user to pick menu options numbered 1 through 4. For
+incorrect user input, prompt the user again.</p>
+</blockquote>
+<ul>
+<li><p>A <code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code>
+loop is perfect for user input validation.</p></li>
+<li><p>Validating user input in C can be tricky due to all the edge
+cases. For now we will keep things simple and not worry too much about
+this.</p></li>
+</ul>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; Loop update: num++; num &lt; 1 or num &gt; 4?; End" class="diagram" loading="lazy"
+width="330" /></p>
+</div>
+</div>
+</div>
+</section>
+<section id="worked-example-picking-a-number-code" class="level3">
+<h3>Worked Example: Picking a Number (Code)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="cf">do</span> <span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>        printf<span class="op">(</span><span class="st">&quot;Pick a menu option (1-4): &quot;</span><span class="op">);</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>        scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>    <span class="op">}</span> <span class="cf">while</span> <span class="op">(</span>num <span class="op">&lt;</span> <span class="dv">1</span> <span class="op">||</span> num <span class="op">&gt;</span> <span class="dv">4</span><span class="op">);</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a></span>
+<span id="cb5-12"><a href="#cb5-12"></a>    printf<span class="op">(</span><span class="st">&quot;You picked option </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a></span>
+<span id="cb5-14"><a href="#cb5-14"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="try-it-do..while-walkthrough" class="level3">
+<h3>Try It: Do..While Walkthrough</h3>
+<div class="tryit">
+<p>Give the program a list of answers the user types, then follow the
+loop:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/do-while/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/do-while/</code></a></span></p>
+</div>
+<ul>
+<li><p>Try a valid first answer like <code
+class="sourceCode c"><span class="dv">3</span></code>: the body <span
+class="alert">still</span> runs once before the test</p></li>
+</ul>
+</div>
+</section>
+<section id="while-vs.-do..while" class="level3">
+<h3><code>while</code> vs. <code>do..while</code></h3>
+<div class="callout">
+<p><strong>Key Differences</strong></p>
+<p><strong>Condition check:</strong></p>
+<ul>
+<li><p><code class="sourceCode c"><span class="cf">while</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+tests the condition <strong>before</strong> the body</p></li>
+<li><p><code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+tests the condition <strong>after</strong> the body</p></li>
+</ul>
+<p><strong>Execution guarantee:</strong></p>
+<ul>
+<li><p><code class="sourceCode c"><span class="cf">while</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+may run <strong>zero or more</strong> times</p></li>
+<li><p><code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+runs <strong>at least once</strong></p></li>
+</ul>
+<p><strong>On the diagram:</strong> the difference is entirely <span
+class="alert">where the diamond sits</span> relative to the dashed body;
+before, or after.</p>
+</div>
+</section>
+</section>
+<section id="the-for-loop" class="level2">
+<h2>The <code>for</code> Loop</h2>
+<section id="the-for-statement" class="level3">
+<h3>The <code>for</code> Statement</h3>
+<p><code class="sourceCode c"><span class="cf">for</span></code> packs
+<strong>initialization</strong>, <strong>condition</strong>, and
+<strong>update</strong> into one line
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+ideal when you know in advance how many times to loop.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span>Initialize Counter<span class="op">;</span> Test Condition<span class="op">;</span> Update Counter<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This is equivalent to:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Initialize Counter<span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>Test Condition<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    Update Counter<span class="op">;}</span></span></code></pre></div>
+</section>
+<section id="the-for-loop-flow-diagram-template" class="level3">
+<h3>The <code>for</code> Loop: Flow Diagram Template</h3>
+<div class="columns">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig05.svg" alt="Flow diagram with boxes: Start; Initialize counter; Test Condition; Loop body: statement 1 …; Update counter; End" class="diagram" loading="lazy"
+width="344" /></p>
+</div>
+</div><div class="column">
+<p><span class="alert">Four blocks, one line of C:</span> Initialize
+Counter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Test Condition
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+loop body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Update Counter, with the loop-back arrow running from Update to the
+diamond.</p>
+</div>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span>Initialize Counter<span class="op">;</span> Test Condition<span class="op">;</span> Update Counter<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  statement <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="worked-example-average-of-5-numbers-for" class="level3">
+<h3>Worked Example: Average of 5 Numbers (<code>for</code>)</h3>
+<div class="columns">
+<div class="column">
+<p>Compute the average of five numbers entered by the user: use a <code
+class="sourceCode c"><span class="cf">for</span></code> loop to read
+each number and accumulate the sum.</p>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare variables: int i float num, sum = 0.0; Initialize Counter: i = 1; i &lt;= 5?; Prompt user and read num; update sum += num; Update counter: i++; Compute average: float average = sum / 5.0; Print result; End" class="diagram" loading="lazy"
+width="573" /></p>
+</div>
+</div>
+</div>
+</section>
+<section id="worked-example-average-of-5-numbers-code" class="level3">
+<h3>Worked Example: Average of 5 Numbers (Code)</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode numberSource c numberLines"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>    <span class="dt">int</span> i<span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>    <span class="dt">float</span> num<span class="op">,</span> sum <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a>    <span class="cf">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;=</span> <span class="dv">5</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a>        printf<span class="op">(</span><span class="st">&quot;Enter number </span><span class="sc">%d</span><span class="st">: &quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>        scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%f</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a>        sum <span class="op">+=</span> num<span class="op">;</span>  <span class="co">// accumulate the sum</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a>    <span class="op">}</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a>    <span class="dt">float</span> average <span class="op">=</span> sum <span class="op">/</span> <span class="fl">5.0</span><span class="op">;</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>    printf<span class="op">(</span><span class="st">&quot;The average is </span><span class="sc">%.2f\n</span><span class="st">&quot;</span><span class="op">,</span> average<span class="op">);</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a></span>
+<span id="cb9-15"><a href="#cb9-15"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="op">}</span></span></code></pre></div>
+</section>
+</section>
+<section id="choosing-a-loop" class="level2">
+<h2>Choosing a Loop</h2>
+<section id="comparing-the-three-loop-shapes" class="level3">
+<h3>Comparing the Three Loop Shapes</h3>
+<p>The key difference between <code
+class="sourceCode c"><span class="cf">while</span></code>, <code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code>,
+and <code class="sourceCode c"><span class="cf">for</span></code> is
+<span class="alert">where the diamond sits</span> relative to the dashed
+loop body:</p>
+<ul>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">while</span></code></strong>:
+diamond <span class="alert">before</span> the dashed body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+test first, may run <strong>zero</strong> times</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code></strong>:
+dashed body <span class="alert">before</span> the diamond
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+test last, runs <strong>at least once</strong></p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">for</span></code></strong>:
+diamond before the dashed body, <strong>plus</strong> an Initialize
+block before the diamond and an Update block after the body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+three ideas collapsed into one line of C</p></li>
+</ul>
+<p>Match the loop’s diagram shape to the problem’s structure
+<em>before</em> writing any code:</p>
+<ul>
+<li><p>Don’t know how many times you’ll loop?
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<code class="sourceCode c"><span class="cf">while</span></code></p></li>
+<li><p>Must run the body at least once (e.g. input validation)?
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code></p></li>
+<li><p>Know the exact count in advance (e.g. "5 numbers", "10
+students")?
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+<code class="sourceCode c"><span class="cf">for</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="loop-control-patterns" class="level2">
+<h2>Loop Control Patterns</h2>
+<section id="counter-pattern" class="level3">
+<h3>Counter Pattern</h3>
+<p>A <strong>counter</strong> tracks how many times the loop has run, or
+drives a fixed number of iterations.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> ctr <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>ctr <span class="op">&lt;=</span> <span class="dv">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Counter is at </span><span class="sc">%d</span><span class="st">.</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> ctr<span class="op">);</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ctr<span class="op">++;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This is exactly what a <code
+class="sourceCode c"><span class="cf">for</span></code> loop’s
+Initialize/Test/Update blocks do for you automatically.</p>
+</section>
+<section id="sentinel-pattern" class="level3">
+<h3>Sentinel Pattern</h3>
+<p>A <strong>sentinel value</strong> is a special input value that means
+"stop"; it is not itself valid data.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Enter a number (0 to stop): &quot;</span><span class="op">);</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>num <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;You entered </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> num<span class="op">);</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Enter a number (0 to stop): &quot;</span><span class="op">);</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Notice the read happens <strong>twice</strong>: once before the loop
+(to prime the test), once at the end of the body (to get the next
+value).</p>
+</section>
+<section id="accumulator-pattern" class="level3">
+<h3>Accumulator Pattern</h3>
+<p>An <strong>accumulator</strong> is a variable that builds up a
+running total across iterations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+it must be initialized <strong>before</strong> the loop.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> sum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>   <span class="co">// accumulator, starts at 0</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> num<span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Enter a number (0 to stop): &quot;</span><span class="op">);</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>num <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    sum <span class="op">+=</span> num<span class="op">;</span>     <span class="co">// accumulate</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Enter a number (0 to stop): &quot;</span><span class="op">);</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    scanf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st">&quot;</span><span class="op">,</span> <span class="op">&amp;</span>num<span class="op">);</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>printf<span class="op">(</span><span class="st">&quot;Total: </span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> sum<span class="op">);</span></span></code></pre></div>
+<p>This combines the sentinel and accumulator patterns; exactly the
+shape of this week’s sum-accumulator lab.</p>
+</section>
+</section>
+<section id="nested-loops" class="level2">
+<h2>Nested Loops</h2>
+<section id="nested-loops-1" class="level3">
+<h3>Nested Loops</h3>
+<p>The <strong>inner</strong> loop runs <em>completely</em> for every
+single iteration of the <strong>outer</strong> loop.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> outer <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> outer <span class="op">&lt;=</span> <span class="dv">3</span><span class="op">;</span> outer<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> inner <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> inner <span class="op">&lt;=</span> <span class="dv">5</span><span class="op">;</span> inner<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> &quot;</span><span class="op">,</span> inner<span class="op">);</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span>   <span class="co">// newline after each inner loop finishes</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Output:</p>
+<pre class="text"><code>1 2 3 4 5
+1 2 3 4 5
+1 2 3 4 5</code></pre>
+<div class="columns">
+<div class="column">
+<p>On the diagram, a nested loop is an <span class="alert">inner dashed
+box</span> nested inside an <span class="alert">outer dashed
+box</span>.</p>
+<p><code class="sourceCode c">inner</code> is set back to <code
+class="sourceCode c"><span class="dv">1</span></code> <span
+class="alert">inside</span> the outer loop, so every row starts
+over.</p>
+</div><div class="column figure-col">
+<div class="center">
+<p><img src="fig07.svg" alt="Flow diagram with boxes: Start; int outer = 1; outer &lt;= 3?; int inner = 1; inner &lt;= 5?; print inner; inner++; newline; outer++; End" class="diagram" loading="lazy"
+width="457" /></p>
+</div>
+</div>
+</div>
+</section>
+<section id="try-it-nested-loops-walkthrough" class="level3">
+<h3>Try It: Nested Loops Walkthrough</h3>
+<div class="tryit">
+<p>Watch the output fill in one row at a time as the inner loop runs
+inside the outer loop:</p>
+<div class="center">
+<p><span><a
+href="https://rbrad070.github.io/cpsc100-course/demos/nested-loops/"
+class="demo-link" target="_blank"
+rel="noopener"><code>rbrad070.github.io/cpsc100-course/demos/nested-loops/</code></a></span></p>
+</div>
+<ul>
+<li><p>Notice <code class="sourceCode c">inner</code> is reset to <code
+class="sourceCode c"><span class="dv">1</span></code> at the start of
+every row; change the limits to see how many times the inner body
+runs</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="common-bugs" class="level2">
+<h2>Common Bugs</h2>
+<section id="off-by-one-errors" class="level3">
+<h3>Off-By-One Errors</h3>
+<p>Should the test be <code
+class="sourceCode c"><span class="op">&lt;</span></code> or <code
+class="sourceCode c"><span class="op">&lt;=</span></code>? Getting this
+wrong runs the loop <strong>one too many, or one too few</strong>,
+times.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Intent: print numbers 1 through 5</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Bug: this prints 1, 2, 3, 4 -- missing 5!</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Should be: i &lt;= 5</span></span></code></pre></div>
+<p><span class="alert">Trace it by hand</span> when you’re unsure: write
+down the value of <code class="sourceCode c">i</code> on the
+<strong>last</strong> pass and check whether it’s the value you
+expected.</p>
+</section>
+<section id="infinite-loops" class="level3">
+<h3>Infinite Loops</h3>
+<p>A loop runs forever when its condition <strong>never becomes
+false</strong>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>i <span class="op">&lt;</span> <span class="dv">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// forgot i++ !</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><span class="alert">Every loop needs something in its body that moves
+it toward the condition becoming false.</span> Before running a loop you
+just wrote, ask:</p>
+<p>”What changes each time through, and does it eventually stop the
+condition?"</p>
+</section>
+<section id="logic-outside-the-loop-body" class="level3">
+<h3>Logic Outside the Loop Body</h3>
+<p>Watch your braces: a statement meant to repeat can accidentally end
+up <strong>outside</strong> the loop body.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">)</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    i<span class="op">++;</span>   <span class="co">// NOT part of the loop body!</span></span></code></pre></div>
+<p>Without braces, only the <code class="sourceCode c">printf</code>
+repeats
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+<code class="sourceCode c">i<span class="op">++</span></code> runs once
+<strong>after</strong> the loop, so <code class="sourceCode c">i</code>
+never changes inside it, and the loop never ends.</p>
+<p><span class="alert">Always use braces</span> <code
+class="text">{ }</code> around a loop body, even for a single
+statement.</p>
+</section>
+</section>
+<section id="break-and-continue" class="level2">
+<h2><code>break</code> and <code>continue</code></h2>
+<section id="the-break-statement" class="level3">
+<h3>The <code>break</code> Statement</h3>
+<p><code class="sourceCode c"><span class="cf">break</span></code> exits
+the loop <strong>immediately</strong>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+execution continues with the code after the loop.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">10</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> &quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">==</span> <span class="dv">4</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Rest of program continues here.</span></span></code></pre></div>
+<p><code class="sourceCode c"><span class="cf">break</span></code>
+usually appears inside an <code
+class="sourceCode c"><span class="cf">if</span></code>; exit
+<strong>early</strong> when some special condition is met.</p>
+</section>
+<section id="the-continue-statement" class="level3">
+<h3>The <code>continue</code> Statement</h3>
+<p><code class="sourceCode c"><span class="cf">continue</span></code>
+skips the <strong>rest of the current iteration</strong> and jumps
+straight to the next one; it does <strong>not</strong> exit the
+loop.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;=</span> <span class="dv">10</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span>i <span class="op">%</span> <span class="dv">2</span><span class="op">)</span> <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span><span class="op">;</span>   <span class="co">// skip odd numbers</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;</span><span class="sc">%d</span><span class="st"> is even</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">);</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><span class="alert"><code
+class="sourceCode c"><span class="cf">break</span></code> exits; <code
+class="sourceCode c"><span class="cf">continue</span></code>
+skips.</span> Both usually appear inside an <code
+class="sourceCode c"><span class="cf">if</span></code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+guard them with a condition, don’t use them unconditionally.</p>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2>Summary</h2>
+<section id="summary-1" class="level3">
+<h3>Summary</h3>
+<ul>
+<li><p><strong>The loop-back arrow</strong>: closes a cycle from the
+bottom of the loop body back to the decision diamond</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">while</span></code></strong>:
+diamond before the body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+test first, may run zero times</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">do</span><span class="op">..</span><span class="cf">while</span></code></strong>:
+body before the diamond
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+test last, runs at least once</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">for</span></code></strong>:
+Initialize
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Test
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\to</annotation></semantics></math>
+Update, collapsed into one line</p></li>
+<li><p><strong>Counter, sentinel, and accumulator</strong> patterns
+control what a loop repeats and when it stops</p></li>
+<li><p><strong>Nested loops</strong>: the inner loop runs completely for
+every iteration of the outer loop; an inner dashed box inside an outer
+one</p></li>
+<li><p><span class="alert">Off-by-one and infinite loops</span> are the
+classic bugs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+trace by hand, and make sure something in the body moves toward the
+condition becoming false</p></li>
+<li><p><strong><code
+class="sourceCode c"><span class="cf">break</span></code></strong> exits
+a loop early; <strong><code
+class="sourceCode c"><span class="cf">continue</span></code></strong>
+skips to the next iteration</p></li>
+</ul>
+</section>
+</section>
+<nav class="pager">
+<a class="prev" href="../lecture04/"><span class="label">← Previous</span>Week
+4: Control Flow; Conditionals</a>
+<a class="next" href="../lecture06/"><span class="label">Next →</span>Week
+6: Strings and Arrays in C</a>
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>
