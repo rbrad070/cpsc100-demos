@@ -71,6 +71,12 @@
   pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
   /* program output and shell sessions (minted text blocks) */
   pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  /* sample runs of a program (make_notes.py compiles and runs it): a terminal,
+     dark in both themes, with what the user typed highlighted */
+  .runoutput { margin: -.3em 0 1.2em; }
+  .run-label { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin: .7em 0 .25em; }
+  pre.terminal { background: #1d1f23; color: #e6e6e9; border: 1px solid #33363d; border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
+  pre.terminal .in { color: #7ee787; font-weight: 700; }
   pre.numberSource code > span { position: relative; left: -4em; }
   pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
   pre.numberSource code > span > a:first-child::before {
@@ -452,6 +458,14 @@ width="501" /></p>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="runoutput">
+<div class="run-label">Sample run 1</div>
+<pre class="terminal">Enter an integer: <span class="in">7</span>
+7 is positive</pre>
+<div class="run-label">Sample run 2</div>
+<pre class="terminal">Enter an integer: <span class="in">-3</span>
+-3 is negative</pre>
+</div>
 </section>
 <section id="the-else-if-chain" class="level3">
 <h3>The <code>else if</code> Chain</h3>
@@ -525,6 +539,17 @@ width="680" /></p>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="runoutput">
+<div class="run-label">Sample run 1</div>
+<pre class="terminal">Enter a score (0-100): <span class="in">95</span>
+Grade: A</pre>
+<div class="run-label">Sample run 2</div>
+<pre class="terminal">Enter a score (0-100): <span class="in">82</span>
+Grade: B</pre>
+<div class="run-label">Sample run 3</div>
+<pre class="terminal">Enter a score (0-100): <span class="in">40</span>
+Go to office hours!</pre>
+</div>
 </section>
 <section id="try-it-grade-classifier-walkthrough" class="level3">
 <h3>Try It: Grade Classifier Walkthrough</h3>

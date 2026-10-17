@@ -71,6 +71,12 @@
   pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
   /* program output and shell sessions (minted text blocks) */
   pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  /* sample runs of a program (make_notes.py compiles and runs it): a terminal,
+     dark in both themes, with what the user typed highlighted */
+  .runoutput { margin: -.3em 0 1.2em; }
+  .run-label { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin: .7em 0 .25em; }
+  pre.terminal { background: #1d1f23; color: #e6e6e9; border: 1px solid #33363d; border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
+  pre.terminal .in { color: #7ee787; font-weight: 700; }
   pre.numberSource code > span { position: relative; left: -4em; }
   pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
   pre.numberSource code > span > a:first-child::before {
@@ -440,6 +446,10 @@ file</span> <em>small_step.c</em>.</p>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">&quot;One giant leap for programmers!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="runoutput">
+<div class="run-label">Sample run</div>
+<pre class="terminal">Just one small step for coders. One giant leap for programmers!</pre>
+</div>
 <p><br />
 This is the simplest complete C program: it compiles, runs, and produces
 output.</p>
