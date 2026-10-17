@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setting Up Your Coding Environment (GitHub
+Codespaces) · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+    --term-bg: #ffffff; --term-ink: #1d1d1f; --term-line: #c9c9cf; --term-in: #1a7f37;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+      --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  /* sample runs of a program (make_notes.py compiles and runs it): a terminal
+     box in the page's theme, with what the user typed highlighted in green */
+  .runoutput { margin: -.3em 0 1.2em; }
+  .run-label { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin: .7em 0 .25em; }
+  pre.terminal { background: var(--term-bg); color: var(--term-ink); border: 1px solid var(--term-line); border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
+  pre.terminal .in { color: var(--term-in); font-weight: 700; }
+  .run-label .run-setup { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .pager.top { margin-top: 16px; padding: 0 0 12px; border-top: none; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  .pager.top + header.title { margin-top: 18px; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<style>nav#TOC::before { content: "On this page"; }</style></head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="../">CPSC 100</a>
+  <span class="crumb">Setup</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<nav class="pager top" aria-label="Previous and next lecture">
+
+
+</nav>
+<header class="title">
+
+<h1>Setting Up Your Coding Environment (GitHub Codespaces)</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#part-1-create-a-github-account"
+id="toc-part-1-create-a-github-account">Part 1: Create a GitHub
+account</a></li>
+<li><a
+href="#part-2-get-verified-as-a-student-free-extra-codespace-hours"
+id="toc-part-2-get-verified-as-a-student-free-extra-codespace-hours">Part
+2: Get verified as a student (free extra Codespace hours)</a></li>
+<li><a
+href="#part-3-make-your-own-copy-of-the-cpsc-100-course-repository"
+id="toc-part-3-make-your-own-copy-of-the-cpsc-100-course-repository">Part
+3: Make your own copy of the CPSC 100 course repository</a></li>
+<li><a href="#part-4-open-your-repo-in-a-codespace"
+id="toc-part-4-open-your-repo-in-a-codespace">Part 4: Open your repo in
+a Codespace</a></li>
+<li><a href="#part-5-everyday-use" id="toc-part-5-everyday-use">Part 5:
+Everyday use</a></li>
+<li><a href="#part-6-downloading-your-work-to-submit"
+id="toc-part-6-downloading-your-work-to-submit">Part 6: Downloading your
+work to submit</a></li>
+<li><a href="#quick-reference-every-work-session"
+id="toc-quick-reference-every-work-session">Quick reference: every work
+session</a></li>
+<li><a href="#troubleshooting"
+id="toc-troubleshooting">Troubleshooting</a></li>
+</ul>
+</nav>
+<p>This course uses <strong>GitHub Codespaces</strong> for all tutorials
+and assignments. A Codespace is a complete coding setup (editor,
+terminal, and C compiler) that runs <strong>in your web
+browser</strong>. You don't install anything on your computer, and it
+works the same on Windows, Mac, Chromebook, or a lab computer.</p>
+<p>You only have to do Parts 1 to 4 <strong>once</strong>. After that,
+the everyday routine is in Part 5.</p>
+<blockquote>
+<p><strong>Never used Git or GitHub before?</strong> That's fine, and
+most of the class hasn't either. You don't need to understand Git to
+follow these steps. Just follow them in order and check for the ✅ at
+the end of each part.</p>
+</blockquote>
+<p><strong>What you need:</strong></p>
+<ul>
+<li>A computer with an up-to-date web browser (Chrome, Edge, Firefox, or
+Safari)</li>
+<li>Your Selkirk student email address</li>
+<li>A phone (for two-factor authentication and for photographing your
+student ID)</li>
+<li>About 30 minutes</li>
+</ul>
+<hr />
+<section id="part-1-create-a-github-account" class="level2">
+<h2>Part 1: Create a GitHub account</h2>
+<ol type="1">
+<li>Go to <strong><a
+href="https://github.com/signup">https://github.com/signup</a></strong>.</li>
+<li>Enter your <strong>Selkirk student email address</strong>. Using
+your school email makes student verification (Part 2) much faster.</li>
+<li>Create a password and choose a <strong>username</strong>.
+<ul>
+<li>Your instructor will see this username, so keep it sensible.
+Something like <code>jsmith-dev</code> or <code>jordan-smith</code>
+works well.</li>
+</ul></li>
+<li>Complete the puzzle and enter the code GitHub emails to you.</li>
+<li>If GitHub asks you personalization questions, you can skip
+them.</li>
+</ol>
+<p><strong>Set up two-factor authentication (2FA).</strong> GitHub
+requires this, and you need it for student verification anyway.</p>
+<ol type="1">
+<li>Click your profile picture (top right) → <strong>Settings</strong> →
+<strong>Password and authentication</strong>.</li>
+<li>Click <strong>Enable two-factor authentication</strong>.</li>
+<li>Follow the steps using an authenticator app on your phone (Google
+Authenticator, Microsoft Authenticator, or the <strong>GitHub
+Mobile</strong> app).</li>
+<li><strong>Save your recovery codes</strong> somewhere safe, such as a
+photo or a note on your phone. If you lose your phone and don't have
+these codes, you can be locked out of your account.</li>
+</ol>
+<p>✅ <strong>Done when:</strong> you can log in to github.com and 2FA
+is turned on.</p>
+<hr />
+</section>
+<section
+id="part-2-get-verified-as-a-student-free-extra-codespace-hours"
+class="level2">
+<h2>Part 2: Get verified as a student (free extra Codespace hours)</h2>
+<p>Every GitHub account gets some free Codespace time each month.
+Verified students get <strong>GitHub Pro for free</strong>, which gives
+you <strong>50% more Codespace time</strong>. That's enough for this
+course.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Free account</th>
+<th>Verified student (GitHub Pro)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Codespace time per month*</td>
+<td>about 60 hours</td>
+<td>about 90 hours</td>
+</tr>
+<tr class="even">
+<td>Storage</td>
+<td>15 GB</td>
+<td>20 GB</td>
+</tr>
+</tbody>
+</table>
+<p>*On the standard 2-core Codespace, which is what this course uses.
+The allowance resets each month.</p>
+<p><strong>How to apply:</strong></p>
+<ol type="1">
+<li>Go to <strong><a
+href="https://education.github.com/pack">https://education.github.com/pack</a></strong>
+and click <strong>Start an application</strong> (or <strong>Sign up for
+Student Developer Pack</strong>).</li>
+<li>Choose <strong>Student</strong>.</li>
+<li>Select your <strong>Selkirk student email</strong> (add it to your
+GitHub account first if it isn't there already) and choose
+<strong>Selkirk College</strong> as your school.</li>
+<li>When asked for proof, <strong>take a photo of your student ID
+card</strong> with your phone or webcam. A photo of your class schedule
+or enrolment letter with the current date also works.</li>
+<li>Submit.</li>
+</ol>
+<p><strong>Tips so you don't get rejected:</strong></p>
+<ul>
+<li><strong>Apply while you're on campus Wi-Fi if you can.</strong>
+GitHub checks your location, and applying from campus helps.</li>
+<li>GitHub may ask you to fill in your <strong>billing
+information</strong> (just your legal name and address, not a credit
+card). Your name there must <strong>match the name on your
+ID</strong>.</li>
+<li>Make sure your GitHub profile has your real name filled in.</li>
+</ul>
+<p>Approval usually takes <strong>a few days</strong>. You'll get an
+email when it goes through. <strong>You don't need to wait for approval
+to continue.</strong> Go ahead with Part 3 now.</p>
+<blockquote>
+<p><strong>You won't be charged.</strong> Unless you add a credit card
+and raise your spending limit (don't), GitHub can't bill you. If you use
+up your monthly hours, Codespaces pauses until next month. That's why
+the student upgrade and the habits in Part 5 matter.</p>
+</blockquote>
+<p>✅ <strong>Done when:</strong> you've submitted the application.
+Approval can arrive later.</p>
+<hr />
+</section>
+<section
+id="part-3-make-your-own-copy-of-the-cpsc-100-course-repository"
+class="level2">
+<h2>Part 3: Make your own copy of the CPSC 100 course repository</h2>
+<p>A <strong>repository</strong> (or "repo") is a project folder stored
+on GitHub. I've made a <em>template</em> repo with everything you need
+for this course. You'll make <strong>your own copy</strong> of it, and
+all your work for the term lives there.</p>
+<ol type="1">
+<li>Make sure you're logged in to GitHub, then open the course template:
+<strong>➡ <a
+href="https://github.com/rbrad070/cpsc100-template">https://github.com/rbrad070/cpsc100-template</a></strong></li>
+<li>Click the green <strong>Use this template</strong> button (top
+right) → <strong>Create a new repository</strong>.</li>
+<li>Fill in the form:
+<ul>
+<li><strong>Owner:</strong> your username (should already be
+selected)</li>
+<li><strong>Repository name:</strong> <code>cpsc100-work</code></li>
+<li><strong>Visibility:</strong> choose <strong>Private</strong>. ⚠️
+This matters, because a public repo lets anyone see (and copy) your
+work.</li>
+</ul></li>
+<li>Click <strong>Create repository</strong>.</li>
+</ol>
+<p>You'll land on the page for your new repo. The address bar should
+show <code>github.com/YOUR-USERNAME/cpsc100-work</code>.</p>
+<blockquote>
+<p>⚠️ Use <strong>"Use this template"</strong>, not "Fork" and not
+"Download ZIP". Those won't give you a repo you can save your work to
+properly.</p>
+</blockquote>
+<p>✅ <strong>Done when:</strong> you have a private repo called
+<code>cpsc100-work</code> under <strong>your</strong> username.</p>
+<hr />
+</section>
+<section id="part-4-open-your-repo-in-a-codespace" class="level2">
+<h2>Part 4: Open your repo in a Codespace</h2>
+<ol type="1">
+<li>On <strong>your</strong> repo page
+(<code>github.com/YOUR-USERNAME/cpsc100-work</code>), click the green
+<strong>&lt;&gt; Code</strong> button.</li>
+<li>Click the <strong>Codespaces</strong> tab.</li>
+<li>Click <strong>Create codespace on main</strong>.</li>
+<li>Wait. <strong>The first launch takes 2 to 5 minutes</strong> while
+it sets up the C compiler and tools. Later launches are much
+faster.</li>
+</ol>
+<p>When it's ready, you'll see an editor in your browser that looks like
+this:</p>
+<pre><code>┌────────────────┬─────────────────────────────────────┐
+│  EXPLORER      │                                     │
+│  (your files)  │        EDITOR                       │
+│                │        (the file you&#39;re working on) │
+│  &gt; assignments │                                     │
+│  &gt; tutorials   │                                     │
+│    README.md   │                                     │
+│                ├─────────────────────────────────────┤
+│                │  TERMINAL                           │
+│                │  @you ➜ /workspaces/cpsc100-work $  │
+└────────────────┴─────────────────────────────────────┘</code></pre>
+<p><strong>Check that everything works.</strong> Click in the terminal
+at the bottom, type this, and press Enter:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gcc</span> <span class="at">--version</span></span></code></pre></div>
+<p>If you see a version number (something like
+<code>gcc (Ubuntu 13.x...)</code>), you're all set.</p>
+<blockquote>
+<p>If the terminal isn't showing, open it with the menu ☰ (top left) →
+<strong>Terminal</strong> → <strong>New Terminal</strong>.</p>
+</blockquote>
+<section id="about-the-devcontainer-folder-do-not-change-or-delete-it"
+class="level3">
+<h3>About the <code>.devcontainer</code> folder: do not change or delete
+it</h3>
+<p>Your repo contains a folder called
+<strong><code>.devcontainer</code></strong> with a file called
+<strong><code>devcontainer.json</code></strong>. This file sets up your
+Codespace: it installs the C compiler and tools, and it <strong>turns
+off autocomplete and AI coding assistants</strong> (like GitHub
+Copilot).</p>
+<p>Those features are off on purpose. This course is about learning to
+write code yourself, and you'll be writing code by hand on tests.
+<strong>Do not edit, move, or delete this folder or file, and do not
+install Copilot or other AI extensions.</strong> Changing this setup
+counts as a violation of the course's academic integrity policy.</p>
+<blockquote>
+<p>As a verified student, GitHub may offer you free Copilot. That's fine
+for other projects, but <strong>don't use it for CPSC 100
+work.</strong></p>
+</blockquote>
+</section>
+<section id="read-the-readme-and-do-your-first-task" class="level3">
+<h3>Read the README and do your first task</h3>
+<p>Your repo has a file called <code>README.md</code> with a short guide
+to using the terminal and compiling your programs. It ends with
+<strong>your first task</strong>: compiling and running a welcome
+program in the <code>tutorials</code> folder and another in the
+<code>assignments</code> folder.</p>
+<ol type="1">
+<li>In the Explorer on the left, <strong>right-click</strong>
+<code>README.md</code> → <strong>Open Preview</strong> to read it with
+formatting. (You can also read it on your repo's page on
+github.com.)</li>
+<li>Read it all the way through, then follow the steps under
+<strong>Your first task: run the welcome programs</strong>.</li>
+</ol>
+<p>✅ <strong>Done when:</strong> your Codespace is open, and both
+welcome programs print their messages.</p>
+<hr />
+</section>
+</section>
+<section id="part-5-everyday-use" class="level2">
+<h2>Part 5: Everyday use</h2>
+<section id="coming-back-to-your-codespace-later" class="level3">
+<h3>Coming back to your Codespace later</h3>
+<p><strong>Don't create a new Codespace every time.</strong> Reopen the
+one you already have:</p>
+<ul>
+<li>Go to <strong><a
+href="https://github.com/codespaces">https://github.com/codespaces</a></strong>
+(bookmark it!), find your <code>cpsc100-work</code> Codespace, and click
+it.</li>
+<li>Or: your repo page → <strong>&lt;&gt; Code</strong> →
+<strong>Codespaces</strong> tab → click your existing Codespace.</li>
+</ul>
+<p>Your files will be exactly as you left them.</p>
+</section>
+<section id="writing-c-code" class="level3">
+<h3>Writing C code</h3>
+<p>Your repo has two main folders:
+<strong><code>tutorials</code></strong> and
+<strong><code>assignments</code></strong>. Keep each tutorial or
+assignment in its own folder inside one of these, for example
+<code>tutorials/tut03</code> or <code>assignments/a1</code>.</p>
+<ul>
+<li><strong>Create a folder:</strong> right-click <code>tutorials</code>
+or <code>assignments</code> in the Explorer → <strong>New
+Folder...</strong> → name it, e.g. <code>tut03</code>.</li>
+<li><strong>Create a file:</strong> right-click the folder → <strong>New
+File...</strong> → name it, e.g. <code>hello.c</code>.</li>
+<li><strong>Open a file:</strong> click it in the Explorer on the
+left.</li>
+<li><strong>Save:</strong> <code>Ctrl + S</code> (Windows/Chromebook) or
+<code>Cmd + S</code> (Mac). A ● dot on the file's tab means it has
+unsaved changes.</li>
+</ul>
+<blockquote>
+<p><strong>Don't use spaces in folder or file names.</strong> Use
+<code>tut-03</code> or <code>tut_03</code>, not <code>tut 03</code>.
+Spaces make terminal commands much harder to type.</p>
+</blockquote>
+</section>
+<section id="compiling-and-running-your-program" class="level3">
+<h3>Compiling and running your program</h3>
+<p>You compile in the terminal with <code>gcc</code>. <strong>The
+terminal must be in the same folder as your <code>.c</code>
+file</strong>, or gcc won't find it.</p>
+<p><strong>Step 1: Open a terminal in the right folder.</strong> In the
+Explorer, <strong>right-click the folder</strong> that holds your
+<code>.c</code> file (e.g. <code>tut03</code>) → <strong>Open in
+Integrated Terminal</strong>. A new terminal opens that's already in
+that folder.</p>
+<p><strong>Step 2: Check you're in the right place.</strong> The
+terminal prompt shows which folder you're in:</p>
+<pre><code>@jsmith ➜ /workspaces/cpsc100-work/tutorials/tut03 (main) $</code></pre>
+<p>Type <code>ls</code> and press Enter. Your <code>.c</code> file
+should be in the list. If it isn't, you're in the wrong folder, so go
+back to Step 1.</p>
+<p><strong>Step 3: Compile.</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gcc</span> <span class="at">-Wall</span> <span class="at">-Wextra</span> <span class="at">-std</span><span class="op">=</span>c11 <span class="at">-g</span> hello.c <span class="at">-o</span> hello</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gcc</code></td>
+<td>Run the C compiler</td>
+</tr>
+<tr class="even">
+<td><code>-Wall -Wextra</code></td>
+<td>Show warnings about likely mistakes. <strong>Read them and fix
+them!</strong></td>
+</tr>
+<tr class="odd">
+<td><code>-std=c11</code></td>
+<td>Use the C11 version of the C language</td>
+</tr>
+<tr class="even">
+<td><code>-g</code></td>
+<td>Include information for the debugger</td>
+</tr>
+<tr class="odd">
+<td><code>hello.c</code></td>
+<td>Your source file (the code you wrote)</td>
+</tr>
+<tr class="even">
+<td><code>-o hello</code></td>
+<td>Name the finished program <code>hello</code></td>
+</tr>
+</tbody>
+</table>
+<p>If nothing is printed, it compiled with no errors or warnings. If you
+see errors, fix your code, save, and compile again.</p>
+<p><strong>Step 4: Run.</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./hello</span></span></code></pre></div>
+<p>The <code>./</code> means "the program in this folder".</p>
+<blockquote>
+<p><strong>Tip:</strong> you don't have to retype the long gcc command.
+Press the <strong>up arrow</strong> (<code>↑</code>) to bring back
+earlier commands, then press Enter.</p>
+</blockquote>
+<p><strong>Moving between folders in the terminal.</strong> If your
+terminal is in a different folder, use <code>cd</code> to move. From the
+top of your repo (<code>/workspaces/cpsc100-work</code>):</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tutorials/tut03             <span class="co"># go into tutorials, then tut03</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..                          <span class="co"># go back up one folder</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /workspaces/cpsc100-work    <span class="co"># jump back to the top of your repo</span></span></code></pre></div>
+<p>Press <strong>Tab</strong> while typing a folder name and the
+terminal fills in the rest for you.</p>
+<p><strong>Handy terminal commands:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ls</code></td>
+<td>List the files in the current folder</td>
+</tr>
+<tr class="even">
+<td><code>cd foldername</code></td>
+<td>Go into a folder</td>
+</tr>
+<tr class="odd">
+<td><code>cd ..</code></td>
+<td>Go back up one folder</td>
+</tr>
+<tr class="even">
+<td><code>pwd</code></td>
+<td>Show which folder you're in</td>
+</tr>
+<tr class="odd">
+<td><code>clear</code></td>
+<td>Clear the terminal screen</td>
+</tr>
+<tr class="even">
+<td><code>↑</code> (up arrow)</td>
+<td>Bring back your previous command</td>
+</tr>
+<tr class="odd">
+<td><code>Ctrl + C</code></td>
+<td>Stop a program that's stuck or running forever</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="saving-your-work-to-github-committing" class="level3">
+<h3>Saving your work to GitHub (committing)</h3>
+<p><strong>Saving a file (<code>Ctrl + S</code>) is not the same as
+saving it to GitHub.</strong> Your files live inside the Codespace. To
+back them up to your GitHub repo, you <strong>commit</strong> and
+<strong>sync</strong>.</p>
+<blockquote>
+<p>⚠️ <strong>Why this matters:</strong> GitHub <strong>automatically
+deletes Codespaces that haven't been used for 30 days</strong>, and a
+Codespace can occasionally break. Anything you haven't committed and
+synced is lost. Anything you have committed is safe in your repo
+forever.</p>
+</blockquote>
+<p><strong>Commit at the end of every work session, and any time you
+finish something you'd hate to lose.</strong></p>
+<ol type="1">
+<li>Click the <strong>Source Control</strong> icon in the left sidebar
+(it looks like a branching line, and it shows a number badge when you
+have changes). Shortcut: <code>Ctrl + Shift + G</code>.</li>
+<li>You'll see a list of the files you changed.</li>
+<li>In the <strong>Message</strong> box at the top, type a short
+description of what you did, e.g.
+<code>Finished tutorial 2 part 1</code>.</li>
+<li>Click <strong>✓ Commit</strong>.
+<ul>
+<li>If a pop-up asks <em>"There are no staged changes to commit. Would
+you like to stage all your changes?"</em>, click
+<strong>Always</strong>. (Staging just means "include these files in the
+commit.")</li>
+</ul></li>
+<li>Click <strong>Sync Changes</strong> (the button that appears in the
+same spot). This sends your commit up to GitHub.
+<ul>
+<li>If it asks about pushing and pulling, click <strong>OK</strong> or
+<strong>OK, Don't Show Again</strong>.</li>
+</ul></li>
+</ol>
+<p><strong>Check that it worked:</strong> go to your repo page on
+github.com and refresh. You should see your commit message next to the
+files you changed.</p>
+<details>
+<summary>Prefer the terminal? (optional)</summary>
+
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;Finished tutorial 2 part 1&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div>
+</details>
+
+</section>
+<section id="when-youre-done-for-the-day" class="level3">
+<h3>When you're done for the day</h3>
+<ol type="1">
+<li><strong>Commit and sync</strong> (above).</li>
+<li><strong>Stop the Codespace</strong> so it doesn't use your monthly
+hours: click <strong>Codespaces</strong> in the blue bar at the
+bottom-left of the screen → <strong>Stop Current Codespace</strong>. You
+can also stop it from <strong><a
+href="https://github.com/codespaces">https://github.com/codespaces</a></strong>
+(click <strong>•••</strong> → <strong>Stop codespace</strong>).</li>
+</ol>
+<p>Codespaces stop on their own after 30 minutes of inactivity, but
+stopping manually saves hours. Closing the browser tab <strong>does
+not</strong> stop it right away.</p>
+<p>To see how many hours you've used this month, go to <strong><a
+href="https://github.com/settings/billing">https://github.com/settings/billing</a></strong>.</p>
+<hr />
+</section>
+</section>
+<section id="part-6-downloading-your-work-to-submit" class="level2">
+<h2>Part 6: Downloading your work to submit</h2>
+<p>Assignments and tutorials are submitted on <strong>Moodle</strong> as
+files. Here are two ways to get your files out of the Codespace and onto
+your computer.</p>
+<section id="option-a-download-straight-from-the-codespace-easiest"
+class="level3">
+<h3>Option A: Download straight from the Codespace (easiest)</h3>
+<ol type="1">
+<li>In the Explorer on the left, <strong>right-click</strong> the file
+(e.g. <code>a1.c</code>) or the whole folder (e.g.
+<code>a1</code>).</li>
+<li>Click <strong>Download...</strong>.</li>
+<li>Your browser saves it to your computer, usually in your
+<strong>Downloads</strong> folder. A folder downloads as a
+<code>.zip</code> file.</li>
+<li>Upload that file to the assignment on Moodle.</li>
+</ol>
+<blockquote>
+<p>If your browser asks for permission to download or to access a
+folder, click <strong>Allow</strong>.</p>
+</blockquote>
+</section>
+<section id="option-b-download-from-your-github-repo-page"
+class="level3">
+<h3>Option B: Download from your GitHub repo page</h3>
+<p>This downloads the version you last <strong>committed and
+synced</strong>, so do that first.</p>
+<ul>
+<li><strong>One file:</strong> on your repo page, click through the
+folders to the file, then click the <strong>Download raw file</strong>
+button (⤓ icon, top right of the file view).</li>
+<li><strong>Everything:</strong> on your repo page, click
+<strong>&lt;&gt; Code</strong> → <strong>Download ZIP</strong>.</li>
+</ul>
+<p><strong>Before you submit, always open the downloaded file</strong>
+to make sure it's the right one and contains your latest work.</p>
+<hr />
+</section>
+</section>
+<section id="quick-reference-every-work-session" class="level2">
+<h2>Quick reference: every work session</h2>
+<pre><code>1. Open    → github.com/codespaces → click your cpsc100-work Codespace
+2. Work    → edit, Ctrl+S to save
+3. Compile → right-click your folder → Open in Integrated Terminal
+             gcc -Wall -Wextra -std=c11 -g hello.c -o hello   then   ./hello
+4. Commit  → Source Control → type a message → ✓ Commit → Sync Changes
+5. Stop    → Codespaces (bottom-left) → Stop Current Codespace
+6. Submit  → right-click file/folder → Download... → upload to Moodle</code></pre>
+<hr />
+</section>
+<section id="troubleshooting" class="level2">
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>gcc: error: hello.c: No such file or directory</code></strong></td>
+<td>The terminal is in the wrong folder, or the file name is spelled
+differently. Type <code>ls</code> to see what's in the current folder,
+then see "Compiling and running your program" in Part 5.</td>
+</tr>
+<tr class="even">
+<td><strong><code>bash: ./hello: No such file or directory</code></strong></td>
+<td>The program wasn't built. Scroll up for gcc errors, fix them, and
+compile again.</td>
+</tr>
+<tr class="odd">
+<td><strong>The Codespace is stuck loading</strong></td>
+<td>Refresh the browser tab. If it's still stuck after a few minutes, go
+to github.com/codespaces, click <strong>•••</strong> next to it →
+<strong>Stop codespace</strong>, then open it again.</td>
+</tr>
+<tr class="even">
+<td><strong>I don't see the "Use this template" button</strong></td>
+<td>Make sure you're <strong>logged in</strong> to GitHub and on the
+course template page, not your own repo.</td>
+</tr>
+<tr class="odd">
+<td><strong>I see "Fork" instead of my own repo</strong></td>
+<td>You forked by mistake. Delete the fork (repo
+<strong>Settings</strong> → scroll to the bottom → <strong>Delete this
+repository</strong>) and redo Part 3.</td>
+</tr>
+<tr class="even">
+<td><strong>"You've used your included Codespaces hours"</strong></td>
+<td>Your monthly hours are used up. Make sure you applied for student
+verification (Part 2) and are stopping your Codespace when done.
+Download your files (Part 6) and talk to your instructor.</td>
+</tr>
+<tr class="odd">
+<td><strong>Sync Changes gives an error</strong></td>
+<td>Take a screenshot and bring it to your instructor or post it in the
+course forum. <strong>Don't delete the Codespace</strong>, because your
+uncommitted work is still inside it.</td>
+</tr>
+<tr class="even">
+<td><strong>Student verification was rejected</strong></td>
+<td>Read the reason in the email. Usually the name didn't match your ID,
+or the photo was unclear. Fix it and reapply (from campus Wi-Fi if
+possible).</td>
+</tr>
+<tr class="odd">
+<td><strong>I accidentally deleted a file</strong></td>
+<td>If you had committed it before: go to your repo on github.com, find
+the file, and copy it back. If you hadn't, ask your instructor.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Still stuck?</strong> Ask in class, come to office hours, or
+post in the Moodle forum with a screenshot of what you're seeing.</p>
+</section>
+<nav class="pager" aria-label="Previous and next lecture">
+
+
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>

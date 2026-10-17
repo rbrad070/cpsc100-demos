@@ -2,6 +2,10 @@
 
 Course notes and interactive demos for CPSC 100 at Selkirk College.
 
+**[Course info](https://rbrad070.github.io/cpsc100-course/course/) · [Schedule](https://rbrad070.github.io/cpsc100-course/schedule/) · [Setting up your coding environment](https://rbrad070.github.io/cpsc100-course/setup/)**
+
+Assignments, tutorial submissions, grades and all due dates are on [Moodle](https://moodle.selkirk.ca/).
+
 ## Lecture Notes
 
 Each week's lecture written out as a chapter you can read top to bottom, with the code, flow diagrams and links to the demos.
