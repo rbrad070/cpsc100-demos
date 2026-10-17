@@ -252,16 +252,16 @@ run <strong>zero</strong> times.</p>
 <section id="worked-example-print-numbers-up-to-9-while" class="level3">
 <h3>Worked Example: Print Numbers Up To 9 (<code>while</code>)</h3>
 <div class="columns">
-<div class="column">
-<p>Prompt the user for an integer <code class="sourceCode c">num</code>.
-Using a <code class="sourceCode c"><span class="cf">while</span></code>
-loop, print all integers from <code class="sourceCode c">num</code> up
-to 9, one per line.</p>
-</div><div class="column figure-col">
+<div class="column figure-col">
 <div class="center">
 <p><img src="fig02.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num &lt; 10?; print num; Loop update: num++; End" class="diagram" loading="lazy"
 width="349" /></p>
 </div>
+</div><div class="column">
+<p>Prompt the user for an integer <code class="sourceCode c">num</code>.
+Using a <code class="sourceCode c"><span class="cf">while</span></code>
+loop, print all integers from <code class="sourceCode c">num</code> up
+to 9, one per line.</p>
 </div>
 </div>
 <div class="sourceCode" id="cb2"><pre
@@ -364,7 +364,12 @@ false.</p>
 <section id="worked-example-picking-a-number-do..while" class="level3">
 <h3>Worked Example: Picking a Number (<code>do..while</code>)</h3>
 <div class="columns">
-<div class="column">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; Loop update: num++; num &lt; 1 or num &gt; 4?; End" class="diagram" loading="lazy"
+width="330" /></p>
+</div>
+</div><div class="column">
 <p>Consider the follow program:</p>
 <blockquote>
 <p>Prompt a user to pick menu options numbered 1 through 4. For
@@ -378,11 +383,6 @@ loop is perfect for user input validation.</p></li>
 cases. For now we will keep things simple and not worry too much about
 this.</p></li>
 </ul>
-</div><div class="column figure-col">
-<div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; Loop update: num++; num &lt; 1 or num &gt; 4?; End" class="diagram" loading="lazy"
-width="330" /></p>
-</div>
 </div>
 </div>
 </section>
@@ -509,15 +509,15 @@ diamond.</p>
 <section id="worked-example-average-of-5-numbers-for" class="level3">
 <h3>Worked Example: Average of 5 Numbers (<code>for</code>)</h3>
 <div class="columns">
-<div class="column">
-<p>Compute the average of five numbers entered by the user: use a <code
-class="sourceCode c"><span class="cf">for</span></code> loop to read
-each number and accumulate the sum.</p>
-</div><div class="column figure-col">
+<div class="column figure-col">
 <div class="center">
 <p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare variables: int i float num, sum = 0.0; Initialize Counter: i = 1; i &lt;= 5?; Prompt user and read num; update sum += num; Update counter: i++; Compute average: float average = sum / 5.0; Print result; End" class="diagram" loading="lazy"
 width="573" /></p>
 </div>
+</div><div class="column">
+<p>Compute the average of five numbers entered by the user: use a <code
+class="sourceCode c"><span class="cf">for</span></code> loop to read
+each number and accumulate the sum.</p>
 </div>
 </div>
 </section>
@@ -667,7 +667,12 @@ single iteration of the <strong>outer</strong> loop.</p>
 1 2 3 4 5
 1 2 3 4 5</code></pre>
 <div class="columns">
-<div class="column">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig07.svg" alt="Flow diagram with boxes: Start; int outer = 1; outer &lt;= 3?; int inner = 1; inner &lt;= 5?; print inner; inner++; newline; outer++; End" class="diagram" loading="lazy"
+width="457" /></p>
+</div>
+</div><div class="column">
 <p>On the diagram, a nested loop is an <span class="alert">inner dashed
 box</span> nested inside an <span class="alert">outer dashed
 box</span>.</p>
@@ -675,11 +680,6 @@ box</span>.</p>
 class="sourceCode c"><span class="dv">1</span></code> <span
 class="alert">inside</span> the outer loop, so every row starts
 over.</p>
-</div><div class="column figure-col">
-<div class="center">
-<p><img src="fig07.svg" alt="Flow diagram with boxes: Start; int outer = 1; outer &lt;= 3?; int inner = 1; inner &lt;= 5?; print inner; inner++; newline; outer++; End" class="diagram" loading="lazy"
-width="457" /></p>
-</div>
 </div>
 </div>
 </section>

@@ -303,7 +303,12 @@ convention.</p>
 <section id="a-string-is-just-an-array" class="level3">
 <h3>A String Is Just an Array</h3>
 <div class="columns">
-<div class="column">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; int i = 0; word[i] != &#x27;\0&#x27;?; Print: word[i]; i = i + 1; Stop" class="diagram" loading="lazy"
+width="495" /></p>
+</div>
+</div><div class="column">
 <p>We just saw that a string is a <code
 class="sourceCode c"><span class="dt">char</span></code> array with
 elements you can index. Walking it is a loop like the ones from previous
@@ -315,18 +320,18 @@ class="alert">until we see the terminator</span></p></li>
 class="text">word[i] != '\0'</code>, underlies almost every string
 operation you will ever write</p></li>
 </ul>
-</div><div class="column figure-col">
-<div class="center">
-<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; int i = 0; word[i] != &#x27;\0&#x27;?; Print: word[i]; i = i + 1; Stop" class="diagram" loading="lazy"
-width="495" /></p>
-</div>
 </div>
 </div>
 </section>
 <section id="worked-example-counting-a-letter" class="level3">
 <h3>Worked Example: Counting a Letter</h3>
 <div class="columns">
-<div class="column">
+<div class="column figure-col">
+<div class="center">
+<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; char letter = &#x27;l&#x27; int i = 0 int count = 0; word[i] != &#x27;\0&#x27;?; word[i] == letter?; count = count + 1; i = i + 1; Print: count; Stop" class="diagram" loading="lazy"
+width="680" /></p>
+</div>
+</div><div class="column">
 <p>How many times does <code
 class="sourceCode c"><span class="ch">&#39;l&#39;</span></code> appear
 in <code
@@ -335,11 +340,6 @@ class="sourceCode c"><span class="st">&quot;hello&quot;</span></code>?</p>
 the terminator</span>.</p>
 <p>We never need to know the length in advance: the <code
 class="text">'\0'</code> tells the loop when to stop.</p>
-</div><div class="column figure-col">
-<div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; char letter = &#x27;l&#x27; int i = 0 int count = 0; word[i] != &#x27;\0&#x27;?; word[i] == letter?; count = count + 1; i = i + 1; Print: count; Stop" class="diagram" loading="lazy"
-width="680" /></p>
-</div>
 </div>
 </div>
 </section>
