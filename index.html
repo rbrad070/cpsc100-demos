@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPSC 100: Introduction to Computer
+Programming · CPSC 100 Notes</title>
+<style>
+  :root {
+    --bg: #f6f6f3;
+    --panel: #ffffff;
+    --ink: #1d1d1f;
+    --muted: #6b6b72;
+    --line: #d6d6db;
+    --accent: #2f6fde;
+    --accent-soft: #dce8fd;
+    --alert: #911a28;
+    --code-bg: #f1f1ee;
+    --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
+    --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+    --term-bg: #ffffff; --term-ink: #1d1d1f; --term-line: #c9c9cf; --term-in: #1a7f37;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+      --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+      --code-bg: #25262b;
+      --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+      --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+      --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --panel: #1e1f23; --ink: #ececf0; --muted: #9b9ca5;
+    --line: #3a3b42; --accent: #6ea0ff; --accent-soft: #1d3157; --alert: #ff8f9c;
+    --code-bg: #25262b;
+    --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
+    --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+
+  .topbar { border-bottom: 1px solid var(--line); background: var(--panel); }
+  .topbar .in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 16px; align-items: center; }
+  .topbar a { text-decoration: none; font-weight: 600; }
+  .topbar .crumb { color: var(--muted); font-size: .9rem; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 8px 16px 48px; }
+  header.title { margin: 28px 0 8px; }
+  header.title .week { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; }
+  header.title h1 { margin: 4px 0 0; font-size: 2.1rem; line-height: 1.2; }
+
+  nav#TOC { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; margin: 20px 0 8px; }
+  nav#TOC::before { content: "In this chapter"; display: block; font-weight: 700; margin-bottom: 4px; }
+  nav#TOC ul { margin: 0; padding-left: 1.2em; }
+
+  h2 { font-size: 1.6rem; margin: 2.4em 0 .4em; padding-bottom: .2em; border-bottom: 2px solid var(--line); }
+  h3 { font-size: 1.2rem; margin: 1.8em 0 .3em; }
+  p, li { max-width: 72ch; }
+  li { margin: .2em 0; }
+  li > p { margin: 0; }
+  .alert { color: var(--alert); font-weight: 600; }
+  :not(pre) > code { background: var(--code-bg); padding: .08em .3em; border-radius: 4px; overflow-wrap: anywhere; }
+  math[display="block"] { overflow-x: auto; max-width: 100%; }
+
+  div.sourceCode { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; margin: 1em 0; overflow-x: auto; }
+  pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
+  /* program output and shell sessions (minted text blocks) */
+  pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+  /* sample runs of a program (make_notes.py compiles and runs it): a terminal
+     box in the page's theme, with what the user typed highlighted in green */
+  .runoutput { margin: -.3em 0 1.2em; }
+  .run-label { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin: .7em 0 .25em; }
+  pre.terminal { background: var(--term-bg); color: var(--term-ink); border: 1px solid var(--term-line); border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
+  pre.terminal .in { color: var(--term-in); font-weight: 700; }
+  .run-label .run-setup { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  pre.numberSource code > span { position: relative; left: -4em; }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
+  pre.numberSource code > span > a:first-child::before {
+    content: counter(source-line); counter-increment: source-line; position: relative; left: -1em;
+    text-align: right; vertical-align: baseline; display: inline-block; width: 4em; color: var(--tok-com);
+  }
+  pre.numberSource code { counter-reset: source-line 0; }
+  pre > code.sourceCode > span { display: inline-block; line-height: 1.5; }
+  code.sourceCode > span > a:first-child { text-decoration: none; }
+  code span.kw, code span.cf { color: var(--tok-kw); font-weight: 600; }
+  code span.dt { color: var(--tok-type); }
+  code span.dv, code span.fl, code span.bn, code span.cn { color: var(--tok-num); }
+  code span.st, code span.ch, code span.sc, code span.ss, code span.vs { color: var(--tok-str); }
+  code span.co, code span.cv, code span.do, code span.an { color: var(--tok-com); font-style: italic; }
+  code span.pp, code span.im { color: var(--tok-pre); }
+  code span.fu, code span.bu { color: var(--tok-fn); }
+
+  img { max-width: 100%; height: auto; }
+  img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
+  /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  .center, figure { text-align: center; }
+  figure { margin: 1em 0; }
+  figcaption { color: var(--muted); font-size: .9rem; }
+  .credit { text-align: center; color: var(--muted); font-size: .78rem; margin-top: -.6em; }
+  .credit p { max-width: none; }
+
+  /* slide columns: a figure keeps its natural width and the other column
+     fills the rest; when both can't fit, they stack (see notes.lua) */
+  .columns { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  .columns > .column { flex: 1 1 280px; min-width: 0; }
+  .columns > .column.figure-col { flex: 0 1 auto; max-width: 100%; margin: 0 auto; }
+  .columns > .column.figure-col img:not(.diagram) { width: 320px; }
+
+  .multicol ul { columns: 4 8em; list-style: none; padding-left: 0; }
+
+  .callout { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 4px 16px; margin: 1em 0; }
+  .tryit { background: var(--accent-soft); border-radius: 10px; padding: 6px 18px; margin: 1.2em 0; }
+  .tryit .center { text-align: left; }
+  a.demo-link { display: inline-block; background: var(--accent); color: var(--bg); padding: 6px 14px; border-radius: 8px; text-decoration: none; }
+  a.demo-link code { background: none; color: inherit; }
+
+  table { border-collapse: collapse; margin: 1em auto; display: block; overflow-x: auto; max-width: 100%; width: fit-content; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); }
+
+  .pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; max-width: 48%; }
+  .pager .label { display: block; color: var(--muted); font-size: .85rem; }
+  .pager .next { margin-left: auto; text-align: right; }
+  .pager.top { margin-top: 16px; padding: 0 0 12px; border-top: none; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  .pager.top + header.title { margin-top: 18px; }
+  .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--ink); }
+  .topbar .theme-toggle { margin-left: auto; }
+</style>
+<script>
+  // apply a saved light/dark choice before the page draws (no flash)
+  try { var t = localStorage.getItem('cpsc100-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <a href="./">CPSC 100</a>
+  <span class="crumb">Home</span>
+  <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
+</div></div>
+<main>
+<nav class="pager top" aria-label="Previous and next lecture">
+
+
+</nav>
+<header class="title">
+
+<h1>CPSC 100: Introduction to Computer Programming</h1>
+</header>
+<p>Course notes and interactive demos for CPSC 100 at Selkirk
+College.</p>
+<p><strong><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/course/">Course
+info</a> · <a
+href="https://selkirk-cpsc.github.io/cpsc100-course/schedule/">Schedule</a>
+· <a href="https://selkirk-cpsc.github.io/cpsc100-course/setup/">Setting
+up your coding environment</a></strong></p>
+<p>Assignments, tutorial submissions, grades and all due dates are on <a
+href="https://learn.selkirk.ca/">Moodle</a>.</p>
+<section id="lecture-notes" class="level2">
+<h2>Lecture Notes</h2>
+<p>Each week's lecture written out as a chapter you can read top to
+bottom, with the code, flow diagrams and links to the demos.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Week</th>
+<th>Chapter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture01/">What
+is a Program?</a></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture02/">Variables,
+Data Types, and Basic I/O</a></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture03/">Operators,
+Expressions, and the Standard Library</a></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture04/">Control
+Flow; Conditionals</a></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture05/">Loops</a></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/lectures/lecture06/">Strings
+and Arrays in C</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="interactive-demos" class="level2">
+<h2>Interactive Demos</h2>
+<p>Each demo steps through a flow diagram one box at a time. As you
+follow the arrows, you can watch the variables, the output and the trace
+table change. Use <strong>Next</strong> / <strong>Back</strong>, or the
+arrow keys.</p>
+<section id="week-4-branching" class="level3">
+<h3>Week 4: Branching</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Demo</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/grade-classifier/">Grade
+Classifier</a></td>
+<td>Follow a score through an <code>if</code> / <code>else if</code> /
+<code>else</code> chain of diamonds. Swap the order of the tests to see
+why the strictest boundary must come first.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="week-5-loops" class="level3">
+<h3>Week 5: Loops</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Demo</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/while-loop/">While
+Loop</a></td>
+<td>Print the numbers from <code>num</code> up to 9. The test comes
+before the loop body, so the body can run zero times.</td>
+</tr>
+<tr class="even">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/do-while/">Do..While
+Loop</a></td>
+<td>Keep asking for a menu option until the user picks 1 to 4. The loop
+body always runs at least once.</td>
+</tr>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/nested-loops/">Nested
+Loops</a></td>
+<td>An inner loop inside an outer loop. Watch the output grid fill one
+row at a time as <code>inner</code> resets for every row.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="week-6-strings-and-arrays" class="level3">
+<h3>Week 6: Strings and Arrays</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Demo</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/count-letter/">Letter
+Counter</a></td>
+<td>Walk a string one index at a time until the <code>'\0'</code>
+terminator, counting how many times a letter appears.</td>
+</tr>
+<tr class="even">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/palindrome/">Palindrome
+Checker</a></td>
+<td>Move two indices, <code>left</code> and <code>right</code>, inward
+from both ends of a word, and use <code>break</code> to stop at the
+first mismatch.</td>
+</tr>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/array-index/">Array
+Index Explorer</a></td>
+<td>Read and write <code>marks[i]</code> for any index. C doesn't check
+bounds, so an out-of-range index quietly reads or overwrites a
+neighbouring variable.</td>
+</tr>
+<tr class="even">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/2d-array/">2D
+Array</a></td>
+<td>Walk a 2D grid with a nested loop and watch each element light up in
+both the grid view and the single strip of memory C really uses
+(row-major order).</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="other-topics" class="level3">
+<h3>Other Topics</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Demo</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a
+href="https://selkirk-cpsc.github.io/cpsc100-course/demos/strcat-stack/">strcat
+and the Stack</a></td>
+<td>Two functions take turns using the same stack memory. An
+uninitialized <code>greeting</code> picks up another function's leftover
+password, and <code>strcat</code> adds onto the end of it. Tick the fix
+to start <code>greeting</code> as <code>""</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>You can type your own word into the string demos, or your own values
+into the 2D array demo, to see how the loop behaves.</p>
+</section>
+</section>
+<nav class="pager" aria-label="Previous and next lecture">
+
+
+</nav>
+</main>
+<script>
+  // light/dark toggle: an explicit choice wins over the system setting
+  (function () {
+    var b = document.getElementById('theme-toggle'), r = document.documentElement;
+    function current() {
+      var t = r.getAttribute('data-theme');
+      return t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    function show() {
+      var dark = current() === 'dark';
+      b.textContent = dark ? '☀ Light' : '☾ Dark';
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    b.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', next);
+      try { localStorage.setItem('cpsc100-theme', next); } catch (e) {}
+      show();
+      b.blur();   // so Space goes back to the demo's "next step"
+    });
+    show();
+  })();
+</script>
+</body>
+</html>
