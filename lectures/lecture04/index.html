@@ -131,6 +131,8 @@
   .pager a { text-decoration: none; max-width: 48%; }
   .pager .label { display: block; color: var(--muted); font-size: .85rem; }
   .pager .next { margin-left: auto; text-align: right; }
+  .pager.top { margin-top: 16px; padding: 0 0 12px; border-top: none; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  .pager.top + header.title { margin-top: 18px; }
   .theme-toggle { font: inherit; font-size: .85rem; line-height: 1.2; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
   .theme-toggle:hover { border-color: var(--ink); }
   .topbar .theme-toggle { margin-left: auto; }
@@ -147,6 +149,12 @@
   <button type="button" class="theme-toggle" id="theme-toggle">☾ Dark</button>
 </div></div>
 <main>
+<nav class="pager top" aria-label="Previous and next lecture">
+<a class="prev" href="../lecture03/"><span class="label">← Previous</span>Week
+3: Operators, Expressions, and the Standard Library</a>
+<a class="next" href="../lecture05/"><span class="label">Next →</span>Week
+5: Loops</a>
+</nav>
 <header class="title">
 <div class="week">Week 4</div>
 <h1>Control Flow; Conditionals</h1>
@@ -790,7 +798,7 @@ for ranges and multi-variable conditions</p></li>
 </ul>
 </section>
 </section>
-<nav class="pager">
+<nav class="pager" aria-label="Previous and next lecture">
 <a class="prev" href="../lecture03/"><span class="label">← Previous</span>Week
 3: Operators, Expressions, and the Standard Library</a>
 <a class="next" href="../lecture05/"><span class="label">Next →</span>Week
