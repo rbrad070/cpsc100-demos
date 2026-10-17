@@ -17,6 +17,7 @@
     --code-bg: #f1f1ee;
     --tok-kw: #7048e8; --tok-type: #0e7178; --tok-num: #b35a00;
     --tok-str: #2b8a3e; --tok-com: #8a8a93; --tok-pre: #c2255c; --tok-fn: #1c4fb8;
+    --term-bg: #ffffff; --term-ink: #1d1d1f; --term-line: #c9c9cf; --term-in: #1a7f37;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -25,6 +26,7 @@
       --code-bg: #25262b;
       --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
       --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+      --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
     }
   }
   :root[data-theme="dark"] {
@@ -33,6 +35,7 @@
     --code-bg: #25262b;
     --tok-kw: #b197fc; --tok-type: #3bc9db; --tok-num: #ffa94d;
     --tok-str: #69db7c; --tok-com: #868e96; --tok-pre: #f783ac; --tok-fn: #74c0fc;
+    --term-bg: #1d1f23; --term-ink: #e6e6e9; --term-line: #33363d; --term-in: #7ee787;
   }
 
   * { box-sizing: border-box; }
@@ -71,12 +74,12 @@
   pre.sourceCode { margin: 0; padding: 12px 14px; line-height: 1.5; }
   /* program output and shell sessions (minted text blocks) */
   pre:not(.sourceCode) { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
-  /* sample runs of a program (make_notes.py compiles and runs it): a terminal,
-     dark in both themes, with what the user typed highlighted */
+  /* sample runs of a program (make_notes.py compiles and runs it): a terminal
+     box in the page's theme, with what the user typed highlighted in green */
   .runoutput { margin: -.3em 0 1.2em; }
   .run-label { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin: .7em 0 .25em; }
-  pre.terminal { background: #1d1f23; color: #e6e6e9; border: 1px solid #33363d; border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
-  pre.terminal .in { color: #7ee787; font-weight: 700; }
+  pre.terminal { background: var(--term-bg); color: var(--term-ink); border: 1px solid var(--term-line); border-radius: 8px; padding: 10px 14px; margin: 0 0 .5em; overflow-x: auto; line-height: 1.5; }
+  pre.terminal .in { color: var(--term-in); font-weight: 700; }
   .run-label .run-setup { text-transform: none; letter-spacing: 0; font-weight: 400; }
   pre.numberSource code > span { position: relative; left: -4em; }
   pre.numberSource { margin-left: 3em; border-left: 1px solid var(--line); padding-left: 4px; }
