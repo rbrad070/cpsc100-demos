@@ -19,17 +19,17 @@ Each week's lecture written out as a chapter you can read top to bottom, with th
 | 5 | [Loops](https://rbrad070.github.io/cpsc100-course/lectures/lecture05/) |
 | 6 | [Strings and Arrays in C](https://rbrad070.github.io/cpsc100-course/lectures/lecture06/) |
 
-# Interactive Demos
+## Interactive Demos
 
 Each demo steps through a flow diagram one box at a time. As you follow the arrows, you can watch the variables, the output and the trace table change. Use **Next** / **Back**, or the arrow keys.
 
-## Week 4: Branching
+### Week 4: Branching
 
 | Demo | What it shows |
 |---|---|
 | [Grade Classifier](https://rbrad070.github.io/cpsc100-course/demos/grade-classifier/) | Follow a score through an `if` / `else if` / `else` chain of diamonds. Swap the order of the tests to see why the strictest boundary must come first. |
 
-## Week 5: Loops
+### Week 5: Loops
 
 | Demo | What it shows |
 |---|---|
@@ -37,7 +37,7 @@ Each demo steps through a flow diagram one box at a time. As you follow the arro
 | [Do..While Loop](https://rbrad070.github.io/cpsc100-course/demos/do-while/) | Keep asking for a menu option until the user picks 1 to 4. The loop body always runs at least once. |
 | [Nested Loops](https://rbrad070.github.io/cpsc100-course/demos/nested-loops/) | An inner loop inside an outer loop. Watch the output grid fill one row at a time as `inner` resets for every row. |
 
-## Week 6: Strings and Arrays
+### Week 6: Strings and Arrays
 
 | Demo | What it shows |
 |---|---|
@@ -46,14 +46,14 @@ Each demo steps through a flow diagram one box at a time. As you follow the arro
 | [Array Index Explorer](https://rbrad070.github.io/cpsc100-course/demos/array-index/) | Read and write `marks[i]` for any index. C doesn't check bounds, so an out-of-range index quietly reads or overwrites a neighbouring variable. |
 | [2D Array](https://rbrad070.github.io/cpsc100-course/demos/2d-array/) | Walk a 2D grid with a nested loop and watch each element light up in both the grid view and the single strip of memory C really uses (row-major order). |
 
-## Week 7: Midterm 1 Review
+### Week 7: Midterm 1 Review
 
 | Demo | What it shows |
 |---|---|
 | [Tracing a Loop](https://rbrad070.github.io/cpsc100-course/demos/review-loop-trace/) | Check your trace table for a `for`-style loop with a decision inside: even values of `i` are added to `total`, odd values take 1 away. Change the loop limit to see the body run zero times. |
 | [Tracing Nested Loops](https://rbrad070.github.io/cpsc100-course/demos/review-nested-trace/) | Check your trace table for an outer loop that counts down and an inner loop with the test `j < i`. When `i` is 1, the inner loop runs zero times. |
 
-## Other Topics
+### Other Topics
 
 | Demo | What it shows |
 |---|---|
