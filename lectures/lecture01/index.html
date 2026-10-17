@@ -101,7 +101,7 @@
   img { max-width: 100%; height: auto; }
   img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
   /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
-  img[src$=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
   .center, figure { text-align: center; }
   figure { margin: 1em 0; }
   figcaption { color: var(--muted); font-size: .9rem; }
@@ -181,7 +181,7 @@ id="toc-computing-environments">Computing Environments</a></li>
 <p>At its core, a computer is a machine that executes <span
 class="alert">instructions</span>, one at a time.</p>
 <div class="center">
-<p><img src="code-instructions.png" alt="A computer runs code as a list of simple instructions, one after another: instruction1 (1+1), instruction2 (2&lt;10?), instruction3, and so on" style="width:55.0%"
+<p><img src="code-instructions.png?v=18a578f1" alt="A computer runs code as a list of simple instructions, one after another: instruction1 (1+1), instruction2 (2&lt;10?), instruction3, and so on" style="width:55.0%"
 loading="lazy" /></p>
 </div>
 <ul>
@@ -197,7 +197,7 @@ another.</p></li>
 physical piece of hardware that reads one instruction, carries it out,
 then moves to the next.</p>
 <div class="center">
-<p><img src="cpu_intel_i7.jpg" alt="Photo of an Intel Core i7 processor chip, top view" style="width:30.0%" loading="lazy" /></p>
+<p><img src="cpu_intel_i7.jpg?v=4ebcea56" alt="Photo of an Intel Core i7 processor chip, top view" style="width:30.0%" loading="lazy" /></p>
 <div class="credit">
 <p>Photo: <a
 href="https://commons.wikimedia.org/wiki/File:Intel_CPU_Core_i7_12700K_Alder_Lake_top.jpg">Eric
@@ -220,7 +220,7 @@ family) has its own, idiosyncratic machine code</p></li>
 compatible</span> with another family’s</p></li>
 </ul>
 <div class="center">
-<p><img src="fig01.svg" alt="Three CPU families, x86 (laptops and desktops), ARM (phones and Apple Macs) and RISC-V (open design, embedded), each with a different pattern of 1s and 0s for the same instruction, add 1" class="diagram" loading="lazy"
+<p><img src="fig01.svg?v=21fbd45a" alt="Three CPU families, x86 (laptops and desktops), ARM (phones and Apple Macs) and RISC-V (open design, embedded), each with a different pattern of 1s and 0s for the same instruction, add 1" class="diagram" loading="lazy"
 width="577" /></p>
 </div>
 </section>
@@ -230,7 +230,7 @@ width="577" /></p>
 instructions.</p>
 <p>An example of a program is the web browser Firefox,</p>
 <div class="center">
-<p><img src="Firefox_logo_2019.png" alt="Firefox logo" style="width:20.0%"
+<p><img src="Firefox_logo_2019.png?v=117d09cf" alt="Firefox logo" style="width:20.0%"
 loading="lazy" /></p>
 <div class="credit">
 <p>Logo: <a
@@ -283,7 +283,7 @@ instructions the CPU understands.</p></li>
 <li><p>How that translation happens depends on the language.</p></li>
 </ul>
 <div class="center">
-<p><img src="software-translation.png" alt="Source code (a = &quot;hello&quot;; b = a + &quot;!&quot;;) is translated into machine code instructions" style="width:80.0%"
+<p><img src="software-translation.png?v=6155cd12" alt="Source code (a = &quot;hello&quot;; b = a + &quot;!&quot;;) is translated into machine code instructions" style="width:80.0%"
 loading="lazy" /></p>
 </div>
 </section>
@@ -324,7 +324,7 @@ line by line, every time you run it.</p>
 <p>This term we will be writing our programs in C, which is a compiled
 language; your text file becomes a runnable program.</p>
 <div class="center">
-<p><img src="software-compiler.png" alt="A compiler turns source code into program.exe, a file of machine code instructions" style="width:80.0%"
+<p><img src="software-compiler.png?v=7b69cc0d" alt="A compiler turns source code into program.exe, a file of machine code instructions" style="width:80.0%"
 loading="lazy" /></p>
 </div>
 <p>Note: the source code in the image above is not actual C syntax; it
@@ -343,7 +343,7 @@ class="alert">compiled</span> (translated) into machine code.</p>
 <li><p>Adaptable</p></li>
 </ul>
 </div><div class="column figure-col">
-<p><span><img src="thompson_ritchie.jpg" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
+<p><span><img src="thompson_ritchie.jpg?v=6e31defa" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
 <div class="credit">
 <p>Photo: <a
 href="https://commons.wikimedia.org/wiki/File:Ken_Thompson_and_Dennis_Ritchie--1973.jpg">unknown
@@ -380,7 +380,7 @@ interpreters written in C.</p></li>
 <li><p>Influenced C++, Objective-C, C#, Carbon etc.</p></li>
 </ul>
 </div><div class="column figure-col">
-<p><span><img src="thompson_ritchie.jpg" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
+<p><span><img src="thompson_ritchie.jpg?v=6e31defa" alt="Photo of Ken Thompson and Dennis Ritchie, the creators of C" loading="lazy" /></span></p>
 <div class="credit">
 <p>Photo: <a
 href="https://commons.wikimedia.org/wiki/File:Ken_Thompson_and_Dennis_Ritchie--1973.jpg">unknown
@@ -519,7 +519,7 @@ diagrams; we’ll keep extending them all course.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig02.svg" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
+<p><img src="fig02.svg?v=5aa3437c" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
 width="173" /></p>
 </div>
 </div><div class="column">
@@ -550,7 +550,7 @@ and produces output.</p>
 <p>For a program that only prints a message, there is no input or
 processing step; just output:</p>
 <div class="center">
-<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Output: printf(...); Stop" class="diagram" loading="lazy"
+<p><img src="fig03.svg?v=b4edd08f" alt="Flow diagram with boxes: Start; Output: printf(...); Stop" class="diagram" loading="lazy"
 width="176" /></p>
 </div>
 </section>
@@ -562,7 +562,7 @@ class="sourceCode c">small_step<span class="op">.</span>c</code>:</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Print: &quot;Just one small step...&quot;; Print: &quot;One giant leap...&quot;; Stop" class="diagram" loading="lazy"
+<p><img src="fig04.svg?v=b7032fee" alt="Flow diagram with boxes: Start; Print: &quot;Just one small step...&quot;; Print: &quot;One giant leap...&quot;; Stop" class="diagram" loading="lazy"
 width="227" /></p>
 </div>
 </div><div class="column">

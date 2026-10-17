@@ -101,7 +101,7 @@
   img { max-width: 100%; height: auto; }
   img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
   /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
-  img[src$=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
   .center, figure { text-align: center; }
   figure { margin: 1em 0; }
   figcaption { color: var(--muted); font-size: .9rem; }
@@ -253,7 +253,7 @@ class="sourceCode c">condition</code> is re-evaluated</p></li>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig01.svg" alt="Flow diagram with boxes: Start; Test Condition; Loop body: statement 1 …; End" class="diagram" loading="lazy"
+<p><img src="fig01.svg?v=72e29d76" alt="Flow diagram with boxes: Start; Test Condition; Loop body: statement 1 …; End" class="diagram" loading="lazy"
 width="356" /></p>
 </div>
 </div><div class="column">
@@ -268,7 +268,7 @@ run <strong>zero</strong> times.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig02.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num &lt; 10?; print num; Loop update: num++; End" class="diagram" loading="lazy"
+<p><img src="fig02.svg?v=c2f39ab8" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num &lt; 10?; print num; Loop update: num++; End" class="diagram" loading="lazy"
 width="349" /></p>
 </div>
 </div><div class="column">
@@ -364,7 +364,7 @@ a value before you can check whether it’s valid.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Loop body: statement 1 …; Test Condition; End" class="diagram" loading="lazy"
+<p><img src="fig03.svg?v=407c6b2b" alt="Flow diagram with boxes: Start; Loop body: statement 1 …; Test Condition; End" class="diagram" loading="lazy"
 width="285" /></p>
 </div>
 </div><div class="column">
@@ -380,7 +380,7 @@ false.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; Loop update: num++; num &lt; 1 or num &gt; 4?; End" class="diagram" loading="lazy"
+<p><img src="fig04.svg?v=e8b6072a" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; Loop update: num++; num &lt; 1 or num &gt; 4?; End" class="diagram" loading="lazy"
 width="330" /></p>
 </div>
 </div><div class="column">
@@ -500,7 +500,7 @@ ideal when you know in advance how many times to loop.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig05.svg" alt="Flow diagram with boxes: Start; Initialize counter; Test Condition; Loop body: statement 1 …; Update counter; End" class="diagram" loading="lazy"
+<p><img src="fig05.svg?v=a69a3926" alt="Flow diagram with boxes: Start; Initialize counter; Test Condition; Loop body: statement 1 …; Update counter; End" class="diagram" loading="lazy"
 width="344" /></p>
 </div>
 </div><div class="column">
@@ -525,7 +525,7 @@ diamond.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare variables: int i float num, sum = 0.0; Initialize Counter: i = 1; i &lt;= 5?; Prompt user and read num; update sum += num; Update counter: i++; Compute average: float average = sum / 5.0; Print result; End" class="diagram" loading="lazy"
+<p><img src="fig06.svg?v=d0f31f64" alt="Flow diagram with boxes: Start; Declare variables: int i float num, sum = 0.0; Initialize Counter: i = 1; i &lt;= 5?; Prompt user and read num; update sum += num; Update counter: i++; Compute average: float average = sum / 5.0; Print result; End" class="diagram" loading="lazy"
 width="573" /></p>
 </div>
 </div><div class="column">
@@ -707,7 +707,7 @@ single iteration of the <strong>outer</strong> loop.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig07.svg" alt="Flow diagram with boxes: Start; int outer = 1; outer &lt;= 3?; int inner = 1; inner &lt;= 5?; print inner; inner++; newline; outer++; End" class="diagram" loading="lazy"
+<p><img src="fig07.svg?v=b2604caf" alt="Flow diagram with boxes: Start; int outer = 1; outer &lt;= 3?; int inner = 1; inner &lt;= 5?; print inner; inner++; newline; outer++; End" class="diagram" loading="lazy"
 width="457" /></p>
 </div>
 </div><div class="column">

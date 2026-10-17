@@ -101,7 +101,7 @@
   img { max-width: 100%; height: auto; }
   img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
   /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
-  img[src$=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
   .center, figure { text-align: center; }
   figure { margin: 1em 0; }
   figcaption { color: var(--muted); font-size: .9rem; }
@@ -195,7 +195,7 @@ class="alert">arrows</span>.</p>
 <p>This week we add a fourth shape: the <span
 class="alert">diamond</span>, for a <strong>decision</strong>.</p>
 <div class="center">
-<p><img src="fig01.svg" alt="Flow diagram with boxes: Decision?" class="diagram" loading="lazy"
+<p><img src="fig01.svg?v=207c37c0" alt="Flow diagram with boxes: Decision?" class="diagram" loading="lazy"
 width="147" /></p>
 </div>
 <ul>
@@ -210,7 +210,7 @@ false)</p></li>
 <section id="the-ifelse-flow-diagram-template" class="level3">
 <h3>The <code>if</code>/<code>else</code> Flow Diagram Template</h3>
 <div class="center">
-<p><img src="fig02.svg" alt="Flow diagram with boxes: Start; Test Condition; Do this if true: statement 1 …; Do this if false: statement 1 …; Stop" class="diagram" loading="lazy"
+<p><img src="fig02.svg?v=f90f6b99" alt="Flow diagram with boxes: Start; Test Condition; Do this if true: statement 1 …; Do this if false: statement 1 …; Stop" class="diagram" loading="lazy"
 width="602" /></p>
 </div>
 <p>The <strong>Test Condition</strong> diamond splits into a true branch
@@ -448,7 +448,7 @@ then print whether it is positive or negative. (Assume <code
 class="sourceCode c"><span class="dv">0</span></code> is positive.) This
 is the diagram you should draw <em>before</em> writing any code.</p>
 <div class="center">
-<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num ≥ 0?; Print: &quot;%d is positive&quot;; Print: &quot;%d is negative&quot;; Stop" class="diagram" loading="lazy"
+<p><img src="fig03.svg?v=494536a4" alt="Flow diagram with boxes: Start; Declare variables: int num; Prompt user and read num; num ≥ 0?; Print: &quot;%d is positive&quot;; Print: &quot;%d is negative&quot;; Stop" class="diagram" loading="lazy"
 width="501" /></p>
 </div>
 </section>
@@ -526,7 +526,7 @@ grade boundary, chained together.</p>
 <section id="grade-classifier-flow-diagram" class="level3">
 <h3>Grade Classifier: Flow Diagram</h3>
 <div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare variables: int score; Prompt user and read score; score ≥ 90?; score ≥ 70?; Print &quot;Go to office hours!&quot;; Stop; Print &#x27;A&#x27;; Print &#x27;B&#x27;" class="diagram" loading="lazy"
+<p><img src="fig04.svg?v=207b12ee" alt="Flow diagram with boxes: Start; Declare variables: int score; Prompt user and read score; score ≥ 90?; score ≥ 70?; Print &quot;Go to office hours!&quot;; Stop; Print &#x27;A&#x27;; Print &#x27;B&#x27;" class="diagram" loading="lazy"
 width="680" /></p>
 </div>
 </section>

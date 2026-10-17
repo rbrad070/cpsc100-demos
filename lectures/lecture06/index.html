@@ -101,7 +101,7 @@
   img { max-width: 100%; height: auto; }
   img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
   /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
-  img[src$=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
   .center, figure { text-align: center; }
   figure { margin: 1em 0; }
   figcaption { color: var(--muted); font-size: .9rem; }
@@ -231,7 +231,7 @@ binary zero, ASCII 0, string terminator.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> month<span class="op">[</span><span class="dv">10</span><span class="op">]</span> <span class="op">=</span> <span class="st">&quot;January&quot;</span><span class="op">;</span></span></code></pre></div>
 <div class="columns">
 <div class="column figure-col">
-<p><img src="fig01.svg" alt="The array month holds J a n u a r y followed by &#x27;\0&#x27; in element 7; elements 8 and 9 also hold &#x27;\0&#x27; and are unused" class="diagram" loading="lazy"
+<p><img src="fig01.svg?v=abafd1c8" alt="The array month holds J a n u a r y followed by &#x27;\0&#x27; in element 7; elements 8 and 9 also hold &#x27;\0&#x27; and are unused" class="diagram" loading="lazy"
 width="600" /></p>
 </div><div class="column">
 <p>7 letters, then <code class="text">'\0'</code> in element 7. Elements
@@ -261,7 +261,7 @@ keeps reading <span class="alert">past the end of the array</span>
 printing whatever garbage bytes happen to follow in memory, until it
 randomly finds a zero byte somewhere.</p>
 <div class="center">
-<p><img src="fig02.svg" alt="The array month holds M a y and &#x27;\0&#x27; in elements 0 to 3; elements 4 to 9 hold unknown leftover values" class="diagram" loading="lazy"
+<p><img src="fig02.svg?v=4219077e" alt="The array month holds M a y and &#x27;\0&#x27; in elements 0 to 3; elements 4 to 9 hold unknown leftover values" class="diagram" loading="lazy"
 width="760" /></p>
 </div>
 </section>
@@ -323,7 +323,7 @@ convention.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig03.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; int i = 0; word[i] != &#x27;\0&#x27;?; Print: word[i]; i = i + 1; Stop" class="diagram" loading="lazy"
+<p><img src="fig03.svg?v=c93cfe98" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; int i = 0; word[i] != &#x27;\0&#x27;?; Print: word[i]; i = i + 1; Stop" class="diagram" loading="lazy"
 width="495" /></p>
 </div>
 </div><div class="column">
@@ -346,7 +346,7 @@ operation you will ever write</p></li>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig04.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; char letter = &#x27;l&#x27; int i = 0 int count = 0; word[i] != &#x27;\0&#x27;?; word[i] == letter?; count = count + 1; i = i + 1; Print: count; Stop" class="diagram" loading="lazy"
+<p><img src="fig04.svg?v=6a1eae6f" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;hello&quot; char letter = &#x27;l&#x27; int i = 0 int count = 0; word[i] != &#x27;\0&#x27;?; word[i] == letter?; count = count + 1; i = i + 1; Print: count; Stop" class="diagram" loading="lazy"
 width="680" /></p>
 </div>
 </div><div class="column">
@@ -395,7 +395,7 @@ class="sourceCode c"><span class="st">&quot;racecar&quot;</span></code>).</p>
 <p><span class="alert">Idea:</span> walk two indices inward from
 opposite ends, comparing as you go.</p>
 <div class="center">
-<p><img src="fig05.svg" alt="The word level in cells 0 to 4, with left pointing at index 0 and right at index 4, moving toward each other" class="diagram" loading="lazy"
+<p><img src="fig05.svg?v=b324bfd9" alt="The word level in cells 0 to 4, with left pointing at index 0 and right at index 4, moving toward each other" class="diagram" loading="lazy"
 width="257" /></p>
 </div>
 </section>
@@ -405,7 +405,7 @@ width="257" /></p>
 class="sourceCode c"><span class="cf">break</span></code>) lead to the
 final <code class="sourceCode c">is_palindrome</code> test.</p>
 <div class="center">
-<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;level&quot; int left = 0 int right = strlen(word) - 1 int is_palindrome = 1; left &lt; right?; word[left] != word[right]?; left++; right--; is_palindrome = 0 (then break); is_palindrome?; Print: word is a palindrome; Print: word is not a palindrome; Stop" class="diagram" loading="lazy"
+<p><img src="fig06.svg?v=93f0eee7" alt="Flow diagram with boxes: Start; Declare/initialize: char word[] = &quot;level&quot; int left = 0 int right = strlen(word) - 1 int is_palindrome = 1; left &lt; right?; word[left] != word[right]?; left++; right--; is_palindrome = 0 (then break); is_palindrome?; Print: word is a palindrome; Print: word is not a palindrome; Stop" class="diagram" loading="lazy"
 width="680" /></p>
 </div>
 </section>
@@ -697,7 +697,7 @@ every array.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> marks<span class="op">[</span><span class="dv">30</span><span class="op">];</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>marks<span class="op">[</span><span class="dv">30</span><span class="op">]</span> <span class="op">=</span> <span class="dv">100</span><span class="op">;</span>  <span class="co">// compiles. runs. corrupts something.</span></span></code></pre></div>
 <div class="center">
-<p><img src="fig07.svg" alt="The array marks has 30 elements, indices 0 to 29; index 30 is past the end and is not part of marks" class="diagram" loading="lazy"
+<p><img src="fig07.svg?v=5fba0b4e" alt="The array marks has 30 elements, indices 0 to 29; index 30 is past the end and is not part of marks" class="diagram" loading="lazy"
 width="303" /></p>
 </div>
 <ul>
@@ -845,7 +845,7 @@ of input.</p></li>
 <section id="row-major-order" class="level3">
 <h3>Row-Major Order</h3>
 <div class="center">
-<p><img src="fig08.svg" alt="A 2D array with 2 rows and 3 columns, grid[0][0] to grid[1][2], with arrows showing it is read row by row" class="diagram" loading="lazy"
+<p><img src="fig08.svg?v=c04346db" alt="A 2D array with 2 rows and 3 columns, grid[0][0] to grid[1][2], with arrows showing it is read row by row" class="diagram" loading="lazy"
 width="452" /></p>
 </div>
 <p>It <em>looks</em> like a grid, but C actually stores it as one
@@ -865,7 +865,7 @@ this is <strong>row-major order</strong>.</p>
 class="alert">offset</span>: how many elements it sits from the start of
 the strip (just like a 1D index).</p>
 <div class="center">
-<p><img src="fig09.svg" alt="The same 2D array laid out as one strip of memory: row 0 then row 1, offsets 0 to 5; grid[1][2] is at offset 5" class="diagram" loading="lazy"
+<p><img src="fig09.svg?v=b3a73f73" alt="The same 2D array laid out as one strip of memory: row 0 then row 1, offsets 0 to 5; grid[1][2] is at offset 5" class="diagram" loading="lazy"
 width="467" /></p>
 </div>
 <p>To reach <code

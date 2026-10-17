@@ -101,7 +101,7 @@
   img { max-width: 100%; height: auto; }
   img.diagram { background: #fff; border-radius: 8px; padding: 8px; display: block; margin: 0 auto; }
   /* PNGs are drawings (some with transparent backgrounds): same white card, so dark lines stay visible in dark mode */
-  img[src$=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
+  img[src*=".png"] { background: #fff; border-radius: 8px; padding: 8px; }
   .center, figure { text-align: center; }
   figure { margin: 1em 0; }
   figcaption { color: var(--muted); font-size: .9rem; }
@@ -183,7 +183,7 @@ Diagrams</a></li>
 <p><span class="alert">Memory is a real, physical piece of
 hardware</span> inside the computer; not just an abstract idea.</p>
 <div class="center">
-<p><img src="hardware-diagram.png" alt="A computer contains a CPU (the brains), RAM (temporary storage) and a disk or flash drive (persistent storage)" style="width:50.0%"
+<p><img src="hardware-diagram.png?v=7cd58f8c" alt="A computer contains a CPU (the brains), RAM (temporary storage) and a disk or flash drive (persistent storage)" style="width:50.0%"
 loading="lazy" /></p>
 </div>
 </section>
@@ -201,7 +201,7 @@ hardware:</p>
 </ul></li>
 </ul>
 <div class="center">
-<p><img src="ram_ddr4.jpg" alt="Photo of a RAM module: a long green circuit board with memory chips" style="width:50.0%" loading="lazy" /></p>
+<p><img src="ram_ddr4.jpg?v=cb9f78fd" alt="Photo of a RAM module: a long green circuit board with memory chips" style="width:50.0%" loading="lazy" /></p>
 <div class="credit">
 <p>Photo: <a
 href="https://commons.wikimedia.org/wiki/File:16_GiB-DDR4-RAM-Riegel_RAM019FIX_Small_Crop_90_PCNT.png">PantheraLeo1359531</a>,
@@ -223,7 +223,7 @@ off</p></li>
 </ul></li>
 </ul>
 <div class="center">
-<p><img src="harddrive_open.jpg" alt="Photo of an opened hard drive showing its shiny disk platter and read arm" style="width:30.0%"
+<p><img src="harddrive_open.jpg?v=16c8bbdc" alt="Photo of an opened hard drive showing its shiny disk platter and read arm" style="width:30.0%"
 loading="lazy" /></p>
 <div class="credit">
 <p>Photo: <a
@@ -238,7 +238,7 @@ public domain, via Wikimedia Commons</p>
 working at that level is far too low-level for everyday programming.</p>
 <p>Instead we use a simpler <span class="alert">mental model</span>:</p>
 <div class="center">
-<p><img src="fig01.svg" alt="A row of eight memory boxes, labelled Addr 0 to Addr 7" class="diagram" loading="lazy"
+<p><img src="fig01.svg?v=effb62a6" alt="A row of eight memory boxes, labelled Addr 0 to Addr 7" class="diagram" loading="lazy"
 width="386" /></p>
 </div>
 <ul>
@@ -268,7 +268,7 @@ class="sourceCode c"><span class="dv">1</span></code>s</p></li>
 depending on how it is read</p></li>
 </ul>
 <div class="center">
-<p><img src="fig02.svg" alt="The same bits in memory, 01000001, read as an int give 65 and read as a char give &#x27;A&#x27;" class="diagram" loading="lazy"
+<p><img src="fig02.svg?v=992f4d39" alt="The same bits in memory, 01000001, read as an int give 65 and read as a char give &#x27;A&#x27;" class="diagram" loading="lazy"
 width="421" /></p>
 </div>
 <p>This is why every variable in C must have a <span class="alert">data
@@ -628,7 +628,7 @@ class="sourceCode c"><span class="dt">int</span></code> ):</p>
 <li><p>amount of memory you’re willing to spend</p></li>
 </ul>
 <div class="center">
-<p><img src="fig03.svg" alt="Memory column where 121.34 (a float) takes more cells than 1923 (an int), beside a balance scale tipped toward the heavier 121.34" class="diagram" loading="lazy"
+<p><img src="fig03.svg?v=b76b1c2d" alt="Memory column where 121.34 (a float) takes more cells than 1923 (an int), beside a balance scale tipped toward the heavier 121.34" class="diagram" loading="lazy"
 width="389" /></p>
 </div>
 <p>Storing floats often takes more memory than storing integers.</p>
@@ -781,7 +781,7 @@ data stored there</p></li>
 <p><code
 class="sourceCode c"><span class="dt">int</span> score <span class="op">=</span> <span class="dv">42</span></code></p>
 <div class="center">
-<p><img src="fig04.svg" alt="A row of memory boxes at addresses 100 to 105; the box at address 102 is named score and holds 42" class="diagram" loading="lazy"
+<p><img src="fig04.svg?v=a1ca55d3" alt="A row of memory boxes at addresses 100 to 105; the box at address 102 is named score and holds 42" class="diagram" loading="lazy"
 width="323" /></p>
 </div>
 </section>
@@ -1105,7 +1105,7 @@ class="level3">
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig05.svg" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
+<p><img src="fig05.svg?v=a6d6a73d" alt="Flow diagram with boxes: Start/Stop; Process; Input/Output" class="diagram" loading="lazy"
 width="173" /></p>
 </div>
 </div><div class="column">
@@ -1129,7 +1129,7 @@ role.</p>
 <div class="columns">
 <div class="column figure-col">
 <div class="center">
-<p><img src="fig06.svg" alt="Flow diagram with boxes: Start; Declare variables: float inches, cm; Input: Prompt and read inches via scanf; Process: cm = inches * 2.54; Output: Print cm via printf; Stop" class="diagram" loading="lazy"
+<p><img src="fig06.svg?v=d00fb12a" alt="Flow diagram with boxes: Start; Declare variables: float inches, cm; Input: Prompt and read inches via scanf; Process: cm = inches * 2.54; Output: Print cm via printf; Stop" class="diagram" loading="lazy"
 width="309" /></p>
 </div>
 </div><div class="column">
